@@ -253,7 +253,7 @@ function App() {
   const query = useQuery({
     queryKey: ['workflow-metrics', metricsUrl],
     queryFn: fetchMetrics,
-    refetchInterval: 60_000,
+    refetchInterval: 24 * 60 * 60 * 1_000,
     staleTime: 30_000,
     retry: 1,
   })
@@ -324,7 +324,7 @@ function App() {
             <div className="card-shadow-shell"><article className="panel sync-panel" id="feed"><div className="panel-heading"><div><span className="section-kicker">DATA FEED</span><h2>n8n metrics endpoint</h2></div><span className={`connection-check ${query.isError ? 'offline' : ''}`} aria-label={query.isError ? 'Disconnected' : 'Connected'}><span /></span></div><div className="feed-receipt"><span className="feed-receipt-label">{query.isError ? 'LAST REQUEST' : query.isFetching ? 'REQUEST IN PROGRESS' : query.isPending ? 'AWAITING FIRST RESPONSE' : 'LAST RESPONSE'}</span><strong>{query.isError ? 'Unable to connect' : query.isFetching ? 'Refreshing metrics' : query.isPending ? 'Waiting for data' : 'Received successfully'}</strong><time>{formatDate(metrics?.updatedAt)}</time></div><div className="sync-url"><span className="url-method">GET</span><code>{metricsEndpoint.pathname}</code><span className="feed-host">{metricsEndpoint.host}</span></div></article></div>
           </section>
 
-          <footer className="page-footer"><span>Orbit · Job search workspace</span><span>Metrics refresh every 60 seconds</span></footer>
+          <footer className="page-footer"><span>Orbit · Job search workspace</span><span>Metrics refresh once a day</span></footer>
         </div>
       </main>
     </div>

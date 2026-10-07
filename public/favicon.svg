@@ -1,1 +1,15 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><rect width="48" height="48" rx="12" fill="#111d32"/><circle cx="23" cy="24" r="7" fill="#d4b76e"/><ellipse cx="23" cy="24" rx="18" ry="8" transform="rotate(-32 23 24)" fill="none" stroke="#a9c2cf" stroke-width="2"/><circle cx="38" cy="13" r="2.5" fill="#f0d59b"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
+  <defs>
+    <linearGradient id="orbit-bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#4d6ba8" />
+      <stop offset=".58" stop-color="#6952a8" />
+      <stop offset="1" stop-color="#313c7b" />
+    </linearGradient>
+  </defs>
+  <path d="M15 1h18a14 14 0 0 1 14 14v18a14 14 0 0 1-14 14H5a4 4 0 0 1-4-4V15A14 14 0 0 1 15 1Z" fill="url(#orbit-bg)" stroke="#b7abf2" stroke-opacity=".48" stroke-width="1.5" />
+  <g fill="none" stroke="#e5ddff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="24" cy="24" r="8.25" />
+    <ellipse cx="24" cy="24" rx="19.5" ry="9.3" transform="rotate(-32 24 24)" />
+  </g>
+  <circle cx="38.55" cy="13.5" r="2.7" fill="#e5ddff" />
+</svg>
