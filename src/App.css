@@ -685,8 +685,7 @@ h2 { color: #e9e7de; font-size: 20px; }
 /* Restore Orbit's cool glass-and-moonlight treatment around the updated content. */
 .app-shell {
   background-color: #090d23;
-  background-image: linear-gradient(122deg, transparent 0 18%, #51469422 18.1% 18.4%, transparent 18.5% 70%, #45669a18 70.1% 70.35%, transparent 70.45%),
-    linear-gradient(180deg, #0b1028 0%, #0a0e24 56%, #100e2b 100%);
+  background-image: linear-gradient(180deg, #0b1028 0%, #0a0e24 56%, #100e2b 100%);
 }
 .sidebar {
   border-right-color: #ffffff11;
