@@ -41,7 +41,8 @@ function SpaceEffects() {
   const [starfall, setStarfall] = useState<Starfall | null>(null)
 
   useEffect(() => {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    const mobilePerformanceMode = window.matchMedia('(max-width: 760px), (pointer: coarse)').matches
+    if (mobilePerformanceMode || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
 
     let timer = 0
     let sequence = 0
@@ -65,6 +66,9 @@ function SpaceEffects() {
   }, [])
 
   useEffect(() => {
+    const mobilePerformanceMode = window.matchMedia('(max-width: 760px), (pointer: coarse)').matches
+    if (mobilePerformanceMode) return
+
     const canvas = canvasRef.current
     if (!canvas) return
     const context = canvas.getContext('2d')

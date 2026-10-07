@@ -1074,3 +1074,37 @@ h2 { color: #eeecfb; }
 @media (max-width: 1100px) {
   .metric-range-shell { grid-column: 1 / -1; }
 }
+
+/* Mobile keeps the space scene, but avoids continuously filtering and repainting it. */
+@media (max-width: 760px), (pointer: coarse) {
+  .space-effects,
+  .space-cursor,
+  .shooting-star {
+    display: none;
+  }
+
+  .app-shell::after { animation: none; }
+
+  .cloud-bank { filter: none; }
+  .cloud-bank-far,
+  .cloud-bank-mid,
+  .cloud-bank-near,
+  .cloud-bank-foam {
+    animation: none;
+    filter: none;
+  }
+  .cloud-texture,
+  .cloud-bellies,
+  .cloud-highlight,
+  .cloud-bank-star { display: none; }
+
+  .moon-disc {
+    animation: none;
+    box-shadow: 0 0 24px #b9d1ff40, 0 0 72px #8eb2ff28;
+  }
+
+  .earth-atmosphere,
+  .cloud-a,
+  .cloud-b,
+  .orbit-rocket { animation: none; }
+}
