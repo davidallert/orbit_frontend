@@ -1041,3 +1041,11 @@ h2 { color: #eeecfb; }
 .metric-grid { gap: 21px; }
 .lower-grid { gap: 21px; margin-top: 24px; }
 .moon-disc { filter: blur(.9px); }
+.welcome-row { overflow: hidden; }
+.orbit-satellite.moon-two {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  animation: orbit-one 12s linear infinite;
+  animation-delay: -6s;
+}
