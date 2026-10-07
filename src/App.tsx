@@ -67,7 +67,19 @@ function SpaceEffects() {
 
   useEffect(() => {
     const mobilePerformanceMode = window.matchMedia('(max-width: 760px), (pointer: coarse)').matches
-    if (mobilePerformanceMode) return
+    const movePointer = (event: PointerEvent) => {
+      if (cursorRef.current && event.pointerType === 'mouse') {
+        cursorRef.current.style.transform = `translate3d(${event.clientX}px, ${event.clientY}px, 0)`
+        cursorRef.current.classList.add('cursor-visible')
+        cursorRef.current.classList.toggle('cursor-hover', Boolean((event.target as HTMLElement).closest('button, a, [role="button"]')))
+      }
+    }
+
+    if (mobilePerformanceMode) {
+      if (!window.matchMedia('(pointer: fine)').matches) return
+      window.addEventListener('pointermove', movePointer, { passive: true })
+      return () => window.removeEventListener('pointermove', movePointer)
+    }
 
     const canvas = canvasRef.current
     if (!canvas) return
@@ -91,14 +103,6 @@ function SpaceEffects() {
       canvas.style.width = `${width}px`
       canvas.style.height = `${height}px`
       context.setTransform(ratio, 0, 0, ratio, 0, 0)
-    }
-
-    const movePointer = (event: PointerEvent) => {
-      if (cursorRef.current && event.pointerType === 'mouse') {
-        cursorRef.current.style.transform = `translate3d(${event.clientX}px, ${event.clientY}px, 0)`
-        cursorRef.current.classList.add('cursor-visible')
-        cursorRef.current.classList.toggle('cursor-hover', Boolean((event.target as HTMLElement).closest('button, a, [role="button"]')))
-      }
     }
 
     const burst = (event: MouseEvent) => {

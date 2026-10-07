@@ -1078,7 +1078,6 @@ h2 { color: #eeecfb; }
 /* Mobile keeps the space scene, but avoids continuously filtering and repainting it. */
 @media (max-width: 760px), (pointer: coarse) {
   .space-effects,
-  .space-cursor,
   .shooting-star {
     display: none;
   }
@@ -1107,4 +1106,11 @@ h2 { color: #eeecfb; }
   .cloud-a,
   .cloud-b,
   .orbit-rocket { animation: none; }
+}
+
+@media (max-width: 760px) {
+  .hero-orbit { display: none; }
+  .welcome-copy { width: 100%; max-width: none; }
+  .welcome-row h1,
+  .welcome-subtitle { max-width: none; }
 }
