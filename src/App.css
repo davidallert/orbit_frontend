@@ -1048,3 +1048,29 @@ h2 { color: #eeecfb; }
   animation: orbit-one 12s linear infinite;
   animation-delay: -6s;
 }
+
+/* Apply the bevel to each existing card surface, preserving its own fill. */
+.welcome-row,
+.metric-card,
+.panel {
+  clip-path: polygon(12px 0, calc(100% - 12px) 0, 100% 12px, 100% calc(100% - 12px), calc(100% - 12px) 100%, 12px 100%, 0 calc(100% - 12px), 0 12px);
+  overflow: visible;
+  box-shadow: none;
+  filter: none;
+}
+
+.card-shadow-shell {
+  position: relative;
+  min-width: 0;
+  filter: drop-shadow(6px -5px 18px rgba(188, 199, 224, .17))
+    drop-shadow(-6px 8px 18px rgba(1, 5, 16, .46));
+}
+
+.metric-card:hover {
+  border-color: #c1b5ff3b;
+  background: linear-gradient(140deg, #ffffff14, #ffffff08);
+}
+
+@media (max-width: 1100px) {
+  .metric-range-shell { grid-column: 1 / -1; }
+}
