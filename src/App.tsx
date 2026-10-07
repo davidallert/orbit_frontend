@@ -32,7 +32,7 @@ type Starfall = {
   intensity: number
 }
 
-const metricsUrl = import.meta.env.VITE_METRICS_URL ?? 'http://localhost:5678/webhook/metrics'
+const metricsUrl = import.meta.env.VITE_METRICS_URL ?? ''
 const metricsEndpoint = new URL(metricsUrl)
 
 function SpaceEffects() {
