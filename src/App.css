@@ -990,21 +990,21 @@ h2 { color: #eeecfb; }
   background: radial-gradient(ellipse at 76% 45%, #8061c14a 0, transparent 36%),
     radial-gradient(ellipse at 93% 0, #f3a94b20 0, transparent 33%),
     linear-gradient(117deg, #171e3aeb, #211d42e8 60%, #1b2444ea);
-  box-shadow: 6px -5px 18px rgba(188, 199, 224, .22),
+  box-shadow: 6px -5px 18px rgba(188, 199, 224, .17),
     -6px 8px 18px rgba(1, 5, 16, .46);
   filter: none;
 }
 .metric-card {
   border-color: #ffffff22;
   background: linear-gradient(140deg, #ffffff12, #ffffff08);
-  box-shadow: 6px -5px 18px rgba(188, 199, 224, .22),
+  box-shadow: 6px -5px 18px rgba(188, 199, 224, .17),
     -6px 8px 18px rgba(1, 5, 16, .46);
   filter: none;
 }
 .panel {
   border-color: #ffffff20;
   background: linear-gradient(140deg, #ffffff13, #ffffff08);
-  box-shadow: 6px -5px 18px rgba(188, 199, 224, .22),
+  box-shadow: 6px -5px 18px rgba(188, 199, 224, .17),
     -6px 8px 18px rgba(1, 5, 16, .46);
   filter: none;
 }
@@ -1037,8 +1037,8 @@ h2 { color: #eeecfb; }
   background: linear-gradient(90deg, transparent, #c9b5ff48, transparent);
   opacity: .45;
 }
-.metric-grid { gap: 21px; }
-.lower-grid { gap: 21px; margin-top: 24px; }
+.metric-grid { gap: 30px; }
+.lower-grid { gap: 30px; margin-top: 30px; }
 .moon-disc { filter: blur(.9px); }
 .welcome-row { overflow: hidden; }
 .orbit-satellite.moon-two {
