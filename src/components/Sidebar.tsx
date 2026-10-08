@@ -1,15 +1,18 @@
 import {
-  Activity,
   BriefcaseBusiness,
   LayoutDashboard,
   Satellite,
   Zap,
 } from 'lucide-react'
 
-export default function Sidebar() {
+type SidebarProps = {
+  activePage: 'overview' | 'workflow' | 'feed'
+}
+
+export default function Sidebar({ activePage }: SidebarProps) {
   return (
     <aside className="sidebar">
-      <a className="brand" href="#overview" aria-label="Orbit home">
+      <a className="brand" href="/" aria-label="Orbit home">
         <span className="brand-mark" aria-hidden="true">
           <svg viewBox="0 0 32 32">
             <circle cx="16" cy="16" r="5.5" />
@@ -27,12 +30,15 @@ export default function Sidebar() {
 
       <div className="nav-label">WORKSPACE</div>
       <nav className="main-nav" aria-label="Main navigation">
-        <a className="nav-item active" href="#overview">
-          <LayoutDashboard size={17} /><span>Overview</span><span className="nav-active-dot" />
+        <a className={`nav-item ${activePage === 'overview' ? 'active' : 'muted-link'}`} href="/">
+          <LayoutDashboard size={17} /><span>Overview</span>{activePage === 'overview' && <span className="nav-active-dot" />}
         </a>
-        <a className="nav-item muted-link" href="#signals"><Activity size={17} /><span>Search signals</span></a>
-        <a className="nav-item muted-link" href="#workflow"><Zap size={17} /><span>Workflow</span></a>
-        <a className="nav-item muted-link" href="#feed"><Satellite size={17} /><span>Data feed</span></a>
+        <a className={`nav-item ${activePage === 'workflow' ? 'active' : 'muted-link'}`} href="/workflow">
+          <Zap size={17} /><span>Workflow</span>{activePage === 'workflow' && <span className="nav-active-dot" />}
+        </a>
+        <a className={`nav-item ${activePage === 'feed' ? 'active' : 'muted-link'}`} href="/feed">
+          <Satellite size={17} /><span>Data feed</span>{activePage === 'feed' && <span className="nav-active-dot" />}
+        </a>
       </nav>
 
       <div className="nav-label integrations-label">Workflow</div>

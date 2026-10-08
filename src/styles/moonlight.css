@@ -1,0 +1,38 @@
+.app-shell.power-mode {
+  background-image:
+    radial-gradient(ellipse 72% 62% at 101% -4%, #d8e5ff24, transparent 71%),
+    linear-gradient(145deg, transparent 25%, #c3d5ff08 49%, transparent 72%),
+    linear-gradient(180deg, #0b1028 0%, #0a0e24 56%, #100e2b 100%);
+}
+
+.app-shell.power-mode .moonlight::before {
+  background:
+    radial-gradient(ellipse 80% 94% at 107% -4%, #e5edff65 0%, #bdceff32 33%, #9fb5ff16 58%, transparent 78%),
+    linear-gradient(145deg, transparent 23%, #c6d8ff12 43%, #b6caff0b 55%, transparent 74%);
+}
+
+.app-shell.power-mode .topbar {
+  background:
+    linear-gradient(105deg, #0a0f25a8 35%, #192344b8 100%);
+  box-shadow: 5px -5px 20px #d8e5ff20, -8px 10px 18px #02061738;
+}
+
+.app-shell.power-mode .sidebar {
+  box-shadow: 5px -5px 22px #d8e5ff1a, -8px 10px 18px #02061742;
+}
+
+.app-shell.power-mode .card-shadow-shell {
+  filter:
+    drop-shadow(5px -7px 16px rgba(202, 222, 255, .28))
+    drop-shadow(-8px 11px 18px rgba(1, 5, 16, .48));
+}
+
+.app-shell.power-mode .page-wrap > .card-shadow-shell:first-child {
+  filter:
+    drop-shadow(2.5px -3.5px 10px rgba(202, 222, 255, .13))
+    drop-shadow(-8px 11px 18px rgba(1, 5, 16, .48));
+}
+
+.app-shell.power-mode .feed-receipt {
+  box-shadow: -5px 0 16px #9c7bdf1c, 3px -3px 13px #d8e5ff20;
+}

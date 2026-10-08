@@ -5,17 +5,20 @@ import type { VisualMode } from '../types/visualMode'
 type TopBarProps = {
   mode: VisualMode
   isError: boolean
+  pageTitle: string
+  sourceUrl?: string
   onToggleMode: () => void
 }
 
-export default function TopBar({ mode, isError, onToggleMode }: TopBarProps) {
+export default function TopBar({ mode, isError, pageTitle, sourceUrl, onToggleMode }: TopBarProps) {
   const powerModeEnabled = mode === 'power'
   const nextModeLabel = powerModeEnabled ? 'Performance' : 'Power'
+  const sourceEndpoint = sourceUrl ? new URL(sourceUrl) : metricsEndpoint
 
   return (
     <header className="topbar">
       <div className="breadcrumbs">
-        <span>ORBIT</span><span className="crumb-slash">/</span><strong>OVERVIEW</strong>
+        <span>ORBIT</span><span className="crumb-slash">/</span><strong>{pageTitle}</strong>
       </div>
       <div className="topbar-tools">
         <button
@@ -32,7 +35,7 @@ export default function TopBar({ mode, isError, onToggleMode }: TopBarProps) {
         <div className="topbar-source">
           <span className={`source-led ${isError ? 'offline' : ''}`} />
           <span>n8n feed</span>
-          <code>{metricsEndpoint.host}{metricsEndpoint.pathname}</code>
+          <code>{sourceEndpoint.host}{sourceEndpoint.pathname}</code>
         </div>
       </div>
     </header>
