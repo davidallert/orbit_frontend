@@ -15,7 +15,7 @@ export default function TopBar({ mode, isError, onToggleMode }: TopBarProps) {
   return (
     <header className="topbar">
       <div className="breadcrumbs">
-        <span>ORBIT</span><span className="crumb-slash">/</span><strong>JOB INTELLIGENCE</strong>
+        <span>ORBIT</span><span className="crumb-slash">/</span><strong>OVERVIEW</strong>
       </div>
       <div className="topbar-tools">
         <button

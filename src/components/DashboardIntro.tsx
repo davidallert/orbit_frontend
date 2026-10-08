@@ -19,10 +19,10 @@ export default function DashboardIntro({
       <div className="card-shadow-shell">
         <section className="welcome-row">
           <div className="welcome-copy">
-            <div className="eyebrow"><span className="eyebrow-line" /> A PERSONAL JOB SEARCH, IN ONE FEED</div>
-            <h1>A running record<br />of your search.</h1>
+            <div className="eyebrow"><span className="eyebrow-line" /> Welcome David</div>
+            <h1>Your job data at a glance.</h1>
             <p className="welcome-subtitle">
-              Your n8n workflow finds roles, scores the fit, and generates cover letters for promising matches.
+              The n8n workflow finds roles, scores the fit, and generates cover letters for promising matches.
             </p>
             <button className="refresh-button" onClick={onRefresh} disabled={isFetching}>
               <RefreshCw size={14} className={isFetching ? 'spin' : ''} />
@@ -67,7 +67,7 @@ export default function DashboardIntro({
 
       <section className="section-heading" id="signals">
         <div><span className="section-kicker">SEARCH STATISTICS</span><h2>The dataset</h2></div>
-        <p className="section-caption">From the latest n8n metrics response</p>
+        <p className="section-caption">From the latest n8n response</p>
       </section>
     </>
   )

@@ -22,7 +22,7 @@ export default function Sidebar() {
 
       <div className="workspace-switcher">
         <div className="workspace-icon"><BriefcaseBusiness size={15} /></div>
-        <div className="workspace-copy"><strong>Job search</strong><span>Personal workspace</span></div>
+        <div className="workspace-copy"><strong>Dashboard</strong><span>Personal workspace</span></div>
       </div>
 
       <div className="nav-label">WORKSPACE</div>
@@ -35,17 +35,17 @@ export default function Sidebar() {
         <a className="nav-item muted-link" href="#feed"><Satellite size={17} /><span>Data feed</span></a>
       </nav>
 
-      <div className="nav-label integrations-label">RUN PROFILE</div>
+      <div className="nav-label integrations-label">Workflow</div>
       <div className="automation-card">
         <span className="automation-mark" aria-hidden="true"><i /><i /><i /></span>
-        <span className="automation-copy"><strong>Job intelligence</strong><small>Discover · score · draft</small></span>
+        <span className="automation-copy"><strong>Method</strong><small>Discover · score · draft</small></span>
       </div>
 
       <div className="sidebar-bottom">
-        <div className="sidebar-note"><span>ORBIT / JOB SEARCH</span><span>One feed. Three useful steps.</span></div>
+        <div className="sidebar-note"><span>ORBIT DASHBOARD</span><span>Launch your career.</span></div>
         <div className="profile-row">
           <div className="avatar">D</div>
-          <div><strong>David</strong><span>Job search workspace</span></div>
+          <div><strong>David</strong><span>Active user</span></div>
         </div>
       </div>
     </aside>

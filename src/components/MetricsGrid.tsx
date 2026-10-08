@@ -57,7 +57,7 @@ export default function MetricsGrid({ isPending, metrics }: MetricsGridProps) {
         <OccupationBreakdown isPending={isPending} metrics={metrics?.job} />
       </section>
       <section className="score-guide" aria-label="Fit score guide">
-        <span className="score-guide-title">FIT SCORE GUIDE</span>
+        <span className="score-guide-title">SCORE GUIDE</span>
         <span><strong>0–20</strong> Major mismatch</span>
         <span><strong>21–40</strong> Weak fit</span>
         <span><strong>41–60</strong> Partial fit</span>
