@@ -51,11 +51,11 @@ export default function WorkflowPanels({
             <span className="flow-connector" />
             <div className="flow-step">
               <span className="flow-index">03</span>
-              <div className="flow-copy"><strong>Draft</strong><span>CV tailored to the role</span></div>
+              <div className="flow-copy"><strong>Draft</strong><span>Cover letter tailored to the role</span></div>
             </div>
           </div>
           <div className="panel-note">
-            <span>Each listing moves from discovery to a CV draft through your n8n workflow.</span>
+            <span>Listings are discovered and scored; promising matches receive generated cover letters.</span>
           </div>
         </article>
       </div>

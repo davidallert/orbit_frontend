@@ -52,10 +52,39 @@ export async function fetchMetrics(): Promise<Metrics> {
     typeof applicationMetrics.updatedAt !== 'string'
   ) throw new Error('The application response is missing one or more expected fields.')
 
+  const updatedAt = [jobMetrics.updatedAt, titleMetrics.updatedAt, applicationMetrics.updatedAt]
+    .sort()
+    .at(-1)
+  if (!updatedAt) throw new Error('The workflow response is missing an update timestamp.')
+
   return {
-    unique_count_job_id: jobMetrics.count,
-    average_rating: jobMetrics.average_rating,
-    max_rating: jobMetrics.max_rating,
-    min_rating: jobMetrics.min_rating,
+    job: {
+      count: jobMetrics.count,
+      average_rating: jobMetrics.average_rating,
+      max_rating: jobMetrics.max_rating,
+      min_rating: jobMetrics.min_rating,
+      occupation_label: jobMetrics.occupation_label,
+      occupation_group: jobMetrics.occupation_group,
+      occupation_field: jobMetrics.occupation_field,
+      occupation_label_count: jobMetrics.occupation_label_count,
+      occupation_group_count: jobMetrics.occupation_group_count,
+      occupation_field_count: jobMetrics.occupation_field_count,
+      createdAt: jobMetrics.createdAt,
+      updatedAt: jobMetrics.updatedAt,
+    },
+    title: {
+      count: titleMetrics.count,
+      createdAt: titleMetrics.createdAt,
+      updatedAt: titleMetrics.updatedAt,
+    },
+    application: {
+      count: applicationMetrics.count,
+      average_rating: applicationMetrics.average_rating,
+      max_rating: applicationMetrics.max_rating,
+      min_rating: applicationMetrics.min_rating,
+      createdAt: applicationMetrics.createdAt,
+      updatedAt: applicationMetrics.updatedAt,
+    },
+    updatedAt,
   }
 }

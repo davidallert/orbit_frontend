@@ -1,6 +1,8 @@
-import { Activity, BriefcaseBusiness, Target } from 'lucide-react'
-import type { CSSProperties } from 'react'
+import { Activity, BriefcaseBusiness, FileText, Search, Target } from 'lucide-react'
 import type { Metrics } from '../types/metrics'
+import MetricCountCard from './MetricCountCard'
+import OccupationBreakdown from './OccupationBreakdown'
+import ScoreMetricCard from './ScoreMetricCard'
 
 type MetricsGridProps = {
   isPending: boolean
@@ -8,69 +10,60 @@ type MetricsGridProps = {
 }
 
 export default function MetricsGrid({ isPending, metrics }: MetricsGridProps) {
-  const ratingPercent = Math.min(100, Math.max(0, metrics?.average_rating ?? 0))
-  const rangeStyle = {
-    '--range-low': `${Math.min(100, Math.max(0, metrics?.min_rating ?? 0))}%`,
-    '--range-high': `${Math.min(100, Math.max(0, metrics?.max_rating ?? 100))}%`,
-  } as CSSProperties
-
   return (
-    <section className="metric-grid" aria-label="Job search metrics">
-      <div className="card-shadow-shell">
-        <article className="metric-card jobs-card">
-          <div className="metric-top">
-            <span className="metric-icon mint-icon"><BriefcaseBusiness size={16} /></span>
-            <span className="metric-label">UNIQUE LISTINGS</span>
-          </div>
-          <div className="metric-number">
-            {isPending ? <span className="skeleton short" /> : metrics?.unique_count_job_id.toLocaleString() ?? '—'}
-          </div>
-          <div className="metric-foot"><span className="metric-caption">Distinct job IDs in the feed</span></div>
-        </article>
-      </div>
-
-      <div className="card-shadow-shell">
-        <article className="metric-card rating-card">
-          <div className="metric-top">
-            <span className="metric-icon violet-icon"><Target size={16} /></span>
-            <span className="metric-label">AVERAGE FIT SCORE</span>
-          </div>
-          <div className="metric-number">
-            {isPending ? <span className="skeleton short" /> : metrics?.average_rating.toFixed(1) ?? '—'}
-            <span className="out-of">/ 100</span>
-          </div>
-          <div className="rating-track" role="meter" aria-label="Average fit score" aria-valuemin={0} aria-valuemax={100} aria-valuenow={ratingPercent}>
-            <span style={{ width: `${ratingPercent}%` }} />
-          </div>
-          <div className="metric-foot"><span className="metric-caption">Mean score across listings</span></div>
-        </article>
-      </div>
-
-      <div className="card-shadow-shell metric-range-shell">
-        <article className="metric-card range-card">
-          <div className="metric-top">
-            <span className="metric-icon amber-icon"><Activity size={16} /></span>
-            <span className="metric-label">SCORE SPREAD</span>
-          </div>
-          <div className="range-values">
-            <div>
-              <span className="range-label">LOWEST</span>
-              <strong>{isPending ? '—' : metrics?.min_rating ?? '—'}</strong>
-            </div>
-            <span className="range-dash" />
-            <div>
-              <span className="range-label">HIGHEST</span>
-              <strong>{isPending ? '—' : metrics?.max_rating ?? '—'}</strong>
-            </div>
-          </div>
-          <div className="metric-foot"><span className="metric-caption">Fit scores across the feed</span></div>
-          <div className="range-track" style={rangeStyle}>
-            <span className="range-dot low" />
-            <span className="range-fill" />
-            <span className="range-dot high" />
-          </div>
-        </article>
-      </div>
-    </section>
+    <>
+      <section className="metric-grid expanded-metric-grid" aria-label="Job search metrics">
+        <MetricCountCard
+          caption="Collected job records"
+          icon={BriefcaseBusiness}
+          isPending={isPending}
+          label="JOBS COLLECTED"
+          value={metrics?.job.count}
+          iconClass="mint-icon"
+        />
+        <MetricCountCard
+          caption="Distinct job titles searched"
+          icon={Search}
+          isPending={isPending}
+          label="TITLES SEARCHED"
+          value={metrics?.title.count}
+          iconClass="violet-icon"
+        />
+        <MetricCountCard
+          caption="Cover letters generated for jobs scoring 40+"
+          icon={FileText}
+          isPending={isPending}
+          label="COVER LETTERS"
+          value={metrics?.application.count}
+          iconClass="amber-icon"
+        />
+        <ScoreMetricCard
+          average={metrics?.job.average_rating}
+          icon={Target}
+          isPending={isPending}
+          label="JOB FIT SCORE"
+          maximum={metrics?.job.max_rating}
+          minimum={metrics?.job.min_rating}
+        />
+        <ScoreMetricCard
+          average={metrics?.application.average_rating}
+          caption="Average for jobs scoring 40+"
+          icon={Activity}
+          isPending={isPending}
+          label="APPLICATION FIT SCORE"
+          maximum={metrics?.application.max_rating}
+          minimum={metrics?.application.min_rating}
+        />
+        <OccupationBreakdown isPending={isPending} metrics={metrics?.job} />
+      </section>
+      <section className="score-guide" aria-label="Fit score guide">
+        <span className="score-guide-title">FIT SCORE GUIDE</span>
+        <span><strong>0–20</strong> Major mismatch</span>
+        <span><strong>21–40</strong> Weak fit</span>
+        <span><strong>41–60</strong> Partial fit</span>
+        <span><strong>61–80</strong> Good fit</span>
+        <span><strong>81–100</strong> Very strong fit</span>
+      </section>
+    </>
   )
 }

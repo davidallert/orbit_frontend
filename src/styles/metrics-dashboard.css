@@ -1,0 +1,170 @@
+.metric-grid.expanded-metric-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: stretch;
+}
+
+.expanded-metric-grid > .card-shadow-shell {
+  min-width: 0;
+}
+
+.metric-card.data-card,
+.metric-card.score-card,
+.metric-card.occupation-card {
+  height: 100%;
+  min-height: 176px;
+}
+
+.score-card .metric-number {
+  margin-top: 12px;
+}
+
+.score-meter {
+  height: 5px;
+  margin-top: 12px;
+  overflow: hidden;
+  background: #ffffff12;
+}
+
+.score-meter > span {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, #ed907b, #f1c16d 42%, #69d2c5);
+  transition: width .25s ease;
+}
+
+.score-card-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.score-band {
+  color: #b1adcc;
+  font-size: 9px;
+}
+
+.score-critical,
+.score-weak { color: #f09b8a; }
+.score-partial { color: #ecc578; }
+.score-good { color: #8cd5bb; }
+.score-strong { color: #83dfcf; }
+
+.score-range {
+  flex: 0 0 auto;
+  color: #9daabe;
+  font-size: 9px;
+  font-variant-numeric: tabular-nums;
+}
+
+.score-guide {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 18px;
+  margin-top: 11px;
+  padding: 10px 13px;
+  border: 1px solid #ffffff14;
+  background: #ffffff06;
+  color: #aaa6c5;
+  font-size: 9px;
+}
+
+.score-guide-title {
+  color: #9aa9be;
+  font-size: 8px;
+  letter-spacing: .7px;
+}
+
+.score-guide strong {
+  margin-right: 4px;
+  color: #e4d8af;
+  font-variant-numeric: tabular-nums;
+}
+
+.occupation-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.occupation-list {
+  display: grid;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.occupation-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 4px 8px;
+  align-items: center;
+}
+
+.occupation-copy {
+  display: grid;
+  min-width: 0;
+  gap: 2px;
+}
+
+.occupation-copy > span {
+  color: #9daabe;
+  font-size: 8px;
+  text-transform: uppercase;
+  letter-spacing: .45px;
+}
+
+.occupation-copy > strong {
+  overflow: hidden;
+  color: #e2deef;
+  font-size: 10px;
+  font-weight: 500;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.occupation-count {
+  color: #d6c58f;
+  font-size: 10px;
+  font-variant-numeric: tabular-nums;
+}
+
+.occupation-track {
+  grid-column: 1 / -1;
+  height: 3px;
+  overflow: hidden;
+  background: #ffffff12;
+}
+
+.occupation-track > span {
+  display: block;
+  width: var(--occupation-width);
+  height: 100%;
+  background: linear-gradient(90deg, #8275c6, #d2b879);
+}
+
+.occupation-loading {
+  color: #aaa6c5;
+  font-size: 9px;
+}
+
+.occupation-card .metric-foot {
+  margin-top: auto;
+  padding-top: 9px;
+}
+
+@media (max-width: 1100px) {
+  .metric-grid.expanded-metric-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  .metric-grid.expanded-metric-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .score-guide {
+    gap: 8px 12px;
+  }
+}

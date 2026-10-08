@@ -22,7 +22,7 @@ export default function DashboardIntro({
             <div className="eyebrow"><span className="eyebrow-line" /> A PERSONAL JOB SEARCH, IN ONE FEED</div>
             <h1>A running record<br />of your search.</h1>
             <p className="welcome-subtitle">
-              Your n8n workflow finds roles, scores the fit, and prepares a tailored CV for each one.
+              Your n8n workflow finds roles, scores the fit, and generates cover letters for promising matches.
             </p>
             <button className="refresh-button" onClick={onRefresh} disabled={isFetching}>
               <RefreshCw size={14} className={isFetching ? 'spin' : ''} />
@@ -31,7 +31,7 @@ export default function DashboardIntro({
           </div>
           <div className="hero-orbit" aria-hidden="true">
             <span className="orbit-label label-one">JOB FEED</span>
-            <span className="orbit-label label-two">{metrics?.unique_count_job_id.toLocaleString() ?? '—'} LISTINGS</span>
+            <span className="orbit-label label-two">{metrics?.job.count.toLocaleString() ?? '—'} LISTINGS</span>
             <span className="orbit-path orbit-path-one" />
             <span className="orbit-path orbit-path-two" />
             <span className="orbit-path orbit-path-three" />
