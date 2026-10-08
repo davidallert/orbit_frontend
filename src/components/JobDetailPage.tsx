@@ -325,16 +325,20 @@ function JobContent({ job }: { job: JobDetails }) {
 }
 
 export default function JobDetailPage({ jobId }: JobDetailPageProps) {
+  const requestedView = new URLSearchParams(window.location.search).get('view')
+  const returnView = requestedView === 'jobs' || requestedView === 'applications' ? requestedView : 'titles'
   const query = useQuery({
     queryKey: ['workflow-job-details', jobId],
     queryFn: () => fetchJobDetails(jobId),
-    staleTime: 60_000,
+    staleTime: 30 * 60_000,
+    gcTime: 60 * 60_000,
+    refetchOnWindowFocus: false,
     retry: 1,
   })
 
   return (
     <section className="job-detail-page">
-      <a className="job-detail-back" href="/feed">
+      <a className="job-detail-back" href={`/feed?view=${returnView}`}>
         <ArrowLeft size={14} />
         <span>Back to data feed</span>
       </a>

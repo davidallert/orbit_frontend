@@ -1,13 +1,27 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { Database, FileText, RefreshCw, Search, Tags } from 'lucide-react'
+import { ArrowDown, ArrowUp, ArrowUpDown, Database, FileText, RefreshCw, Search, Tags } from 'lucide-react'
 import { applicationsUrl, fetchApplications, fetchJobs, jobsUrl } from '../services/dataFeed'
 import { fetchTitles, titlesUrl } from '../services/titles'
 import type { FeedApplication, FeedJob } from '../types/dataFeed'
 
 type DataTab = 'titles' | 'jobs' | 'applications'
+type SortDirection = 'asc' | 'desc'
+type SortState = { key: string; direction: SortDirection } | null
 type DataFeedPageProps = {
   onSourceChange: (url: string) => void
+}
+
+function numericValue(value: string | null): number | null {
+  if (value === null || value.trim() === '') return null
+  const parsed = Number(value)
+  return Number.isFinite(parsed) ? parsed : null
+}
+
+function dateValue(value: string | null): number | null {
+  if (!value) return null
+  const timestamp = new Date(value).getTime()
+  return Number.isFinite(timestamp) ? timestamp : null
 }
 
 const tabs: { id: DataTab; label: string; icon: typeof Tags }[] = [
@@ -15,6 +29,15 @@ const tabs: { id: DataTab; label: string; icon: typeof Tags }[] = [
   { id: 'jobs', label: 'Jobs', icon: Database },
   { id: 'applications', label: 'Applications', icon: FileText },
 ]
+
+function initialFeedTab(): DataTab {
+  const view = new URLSearchParams(window.location.search).get('view')
+  return view === 'jobs' || view === 'applications' ? view : 'titles'
+}
+
+function jobDetailsHref(jobId: number, view: DataTab): string {
+  return `/jobs/${jobId}?view=${view}`
+}
 
 function matchingText(values: Array<string | null | undefined>, search: string): boolean {
   const normalizedSearch = search.trim().toLocaleLowerCase()
@@ -27,14 +50,87 @@ function formatDeadline(deadline: string | null): string {
   return Number.isNaN(date.getTime()) ? deadline : date.toLocaleDateString()
 }
 
-function JobTable({ jobs, search }: { jobs: FeedJob[]; search: string }) {
-  const rows = jobs.filter((job) => matchingText([
+function isDeadlineApproaching(deadline: string | null): boolean {
+  if (!deadline) return false
+  const timestamp = new Date(deadline).getTime()
+  const remaining = timestamp - Date.now()
+  return Number.isFinite(timestamp) && remaining >= 0 && remaining <= 7 * 24 * 60 * 60 * 1000
+}
+
+function sortRows<T>(
+  rows: T[],
+  sort: SortState,
+  valueFor: (row: T, key: string) => string | number | boolean | null,
+): T[] {
+  if (!sort) return rows
+  const multiplier = sort.direction === 'asc' ? 1 : -1
+  return [...rows].sort((left, right) => {
+    const leftValue = valueFor(left, sort.key)
+    const rightValue = valueFor(right, sort.key)
+    if (leftValue === null) return rightValue === null ? 0 : 1
+    if (rightValue === null) return -1
+    if (typeof leftValue === 'number' && typeof rightValue === 'number') {
+      return (leftValue - rightValue) * multiplier
+    }
+    if (typeof leftValue === 'boolean' && typeof rightValue === 'boolean') {
+      return (Number(leftValue) - Number(rightValue)) * multiplier
+    }
+    return String(leftValue).localeCompare(String(rightValue), undefined, { numeric: true, sensitivity: 'base' }) * multiplier
+  })
+}
+
+function SortHeader({
+  label,
+  field,
+  sort,
+  onSort,
+}: {
+  label: string
+  field: string
+  sort: SortState
+  onSort: (field: string) => void
+}) {
+  const active = sort?.key === field
+  const nextDirection = active && sort.direction === 'asc' ? 'descending' : 'ascending'
+  return (
+    <th scope="col" aria-sort={active ? sort.direction === 'asc' ? 'ascending' : 'descending' : 'none'}>
+      <button className="data-sort-button" type="button" onClick={() => onSort(field)}>
+        <span>{label}</span>
+        {active && (sort.direction === 'asc' ? <ArrowUp size={11} /> : <ArrowDown size={11} />)}
+        {!active && <ArrowUpDown className="sort-indicator" size={11} aria-hidden="true" />}
+        <span className="visually-hidden">{active ? `Sorted ${sort.direction === 'asc' ? 'ascending' : 'descending'}` : `Sort ${nextDirection}`}</span>
+      </button>
+    </th>
+  )
+}
+
+function JobTable({
+  jobs,
+  search,
+  sort,
+  onSort,
+}: {
+  jobs: FeedJob[]
+  search: string
+  sort: SortState
+  onSort: (field: string) => void
+}) {
+  const filteredRows = jobs.filter((job) => matchingText([
     String(job.job_id),
     job.headline,
     job.employer,
     job.municipality,
     job.rating,
   ], search))
+  const rows = sortRows(filteredRows, sort, (job, key) => {
+    if (key === 'job_id') return job.job_id
+    if (key === 'headline') return job.headline
+    if (key === 'employer') return job.employer
+    if (key === 'municipality') return job.municipality
+    if (key === 'rating') return numericValue(job.rating)
+    if (key === 'deadline') return dateValue(job.deadline)
+    return null
+  })
 
   return (
     <>
@@ -42,26 +138,31 @@ function JobTable({ jobs, search }: { jobs: FeedJob[]; search: string }) {
         <table className="data-table jobs-data-table">
           <thead>
             <tr>
-              <th scope="col">JOB ID</th>
-              <th scope="col">JOB</th>
-              <th scope="col">EMPLOYER</th>
-              <th scope="col">LOCATION</th>
-              <th scope="col">FIT</th>
-              <th scope="col">DEADLINE</th>
+              <SortHeader label="JOB ID" field="job_id" sort={sort} onSort={onSort} />
+              <SortHeader label="JOB" field="headline" sort={sort} onSort={onSort} />
+              <SortHeader label="EMPLOYER" field="employer" sort={sort} onSort={onSort} />
+              <SortHeader label="LOCATION" field="municipality" sort={sort} onSort={onSort} />
+              <SortHeader label="FIT" field="rating" sort={sort} onSort={onSort} />
+              <SortHeader label="DEADLINE" field="deadline" sort={sort} onSort={onSort} />
             </tr>
           </thead>
           <tbody>
             {rows.length ? rows.map((job, index) => (
               <tr key={`${job.job_id}-${index}`}>
-                <td className="data-row-number"><a className="data-id-link" href={`/jobs/${job.job_id}`}>{job.job_id}</a></td>
+                <td className="data-row-number"><a className="data-id-link" href={jobDetailsHref(job.job_id, 'jobs')}>{job.job_id}</a></td>
                 <td className="data-title-cell">
                   <span className="data-title-marker" />
-                  <a className="data-record-link" href={`/jobs/${job.job_id}`}>{job.headline ?? 'Title unavailable'}</a>
+                  <a className="data-record-link" href={jobDetailsHref(job.job_id, 'jobs')}>{job.headline ?? 'Title unavailable'}</a>
                 </td>
                 <td>{job.employer ?? '—'}</td>
                 <td>{job.municipality ?? '—'}</td>
                 <td>{job.rating === null ? '—' : <span className="data-rating">{job.rating}</span>}</td>
-                <td>{formatDeadline(job.deadline)}</td>
+                <td
+                  className={isDeadlineApproaching(job.deadline) ? 'deadline-approaching' : undefined}
+                  title={isDeadlineApproaching(job.deadline) ? 'Deadline is within 7 days' : undefined}
+                >
+                  {formatDeadline(job.deadline)}
+                </td>
               </tr>
             )) : <tr><td className="data-table-loading" colSpan={6}>{search ? 'No jobs match your filter.' : 'No jobs have been added yet.'}</td></tr>}
           </tbody>
@@ -75,14 +176,32 @@ function JobTable({ jobs, search }: { jobs: FeedJob[]; search: string }) {
   )
 }
 
-function ApplicationTable({ applications, search }: { applications: FeedApplication[]; search: string }) {
-  const rows = applications.filter((application) => matchingText([
+function ApplicationTable({
+  applications,
+  search,
+  sort,
+  onSort,
+}: {
+  applications: FeedApplication[]
+  search: string
+  sort: SortState
+  onSort: (field: string) => void
+}) {
+  const filteredRows = applications.filter((application) => matchingText([
     application.job_id === null ? null : String(application.job_id),
     application.headline,
     application.employer,
     application.rating,
     application.applied ? 'applied' : 'not applied',
   ], search))
+  const rows = sortRows(filteredRows, sort, (application, key) => {
+    if (key === 'job_id') return application.job_id
+    if (key === 'headline') return application.headline
+    if (key === 'employer') return application.employer
+    if (key === 'rating') return numericValue(application.rating)
+    if (key === 'applied') return application.applied
+    return null
+  })
 
   return (
     <>
@@ -90,11 +209,11 @@ function ApplicationTable({ applications, search }: { applications: FeedApplicat
         <table className="data-table applications-data-table">
           <thead>
             <tr>
-              <th scope="col">JOB ID</th>
-              <th scope="col">JOB</th>
-              <th scope="col">EMPLOYER</th>
-              <th scope="col">FIT</th>
-              <th scope="col">STATUS</th>
+              <SortHeader label="JOB ID" field="job_id" sort={sort} onSort={onSort} />
+              <SortHeader label="JOB" field="headline" sort={sort} onSort={onSort} />
+              <SortHeader label="EMPLOYER" field="employer" sort={sort} onSort={onSort} />
+              <SortHeader label="FIT" field="rating" sort={sort} onSort={onSort} />
+              <SortHeader label="STATUS" field="applied" sort={sort} onSort={onSort} />
             </tr>
           </thead>
           <tbody>
@@ -103,13 +222,13 @@ function ApplicationTable({ applications, search }: { applications: FeedApplicat
                 <td className="data-row-number">
                   {application.job_id === null
                     ? '—'
-                    : <a className="data-id-link" href={`/jobs/${application.job_id}`}>{application.job_id}</a>}
+                    : <a className="data-id-link" href={jobDetailsHref(application.job_id, 'applications')}>{application.job_id}</a>}
                 </td>
                 <td className="data-title-cell">
                   <span className="data-title-marker" />
                   {application.job_id === null
                     ? <span>{application.headline ?? 'Job details unavailable'}</span>
-                    : <a className="data-record-link" href={`/jobs/${application.job_id}`}>{application.headline ?? 'Title unavailable'}</a>}
+                    : <a className="data-record-link" href={jobDetailsHref(application.job_id, 'applications')}>{application.headline ?? 'Title unavailable'}</a>}
                 </td>
                 <td>{application.employer ?? '—'}</td>
                 <td>{application.rating === null ? '—' : <span className="data-rating">{application.rating}</span>}</td>
@@ -129,23 +248,48 @@ function ApplicationTable({ applications, search }: { applications: FeedApplicat
 
 export default function DataFeedPage({ onSourceChange }: DataFeedPageProps) {
   const [search, setSearch] = useState('')
-  const [activeTab, setActiveTab] = useState<DataTab>('titles')
+  const [activeTab, setActiveTab] = useState<DataTab>(initialFeedTab)
+  const [sortByTab, setSortByTab] = useState<Record<DataTab, SortState>>({
+    titles: null,
+    jobs: null,
+    applications: null,
+  })
+  const sort = sortByTab[activeTab]
+
+  function handleSort(field: string) {
+    setSortByTab((current) => ({
+      ...current,
+      [activeTab]: current[activeTab]?.key === field
+        ? { key: field, direction: current[activeTab].direction === 'asc' ? 'desc' : 'asc' }
+        : { key: field, direction: 'asc' },
+    }))
+  }
+  useEffect(() => {
+    onSourceChange(activeTab === 'titles' ? titlesUrl : activeTab === 'jobs' ? jobsUrl : applicationsUrl)
+  }, [activeTab, onSourceChange])
+
   const titlesQuery = useQuery({
     queryKey: ['workflow-titles', titlesUrl],
     queryFn: fetchTitles,
-    staleTime: 60_000,
+    staleTime: 30 * 60_000,
+    gcTime: 60 * 60_000,
+    refetchOnWindowFocus: false,
     retry: 1,
   })
   const jobsQuery = useQuery({
     queryKey: ['workflow-jobs', jobsUrl],
     queryFn: fetchJobs,
-    staleTime: 60_000,
+    staleTime: 30 * 60_000,
+    gcTime: 60 * 60_000,
+    refetchOnWindowFocus: false,
     retry: 1,
   })
   const applicationsQuery = useQuery({
     queryKey: ['workflow-applications', applicationsUrl],
     queryFn: fetchApplications,
-    staleTime: 60_000,
+    staleTime: 30 * 60_000,
+    gcTime: 60 * 60_000,
+    refetchOnWindowFocus: false,
     retry: 1,
   })
 
@@ -190,7 +334,6 @@ export default function DataFeedPage({ onSourceChange }: DataFeedPageProps) {
               onClick={() => {
                 setSearch('')
                 setActiveTab(id)
-                onSourceChange(id === 'titles' ? titlesUrl : id === 'jobs' ? jobsUrl : applicationsUrl)
               }}
             >
               <Icon size={14} />
@@ -238,9 +381,19 @@ export default function DataFeedPage({ onSourceChange }: DataFeedPageProps) {
         <>
           <div className="data-table-shell" id="data-feed-panel" role="tabpanel" aria-labelledby="data-tab-titles">
             <table className="data-table titles-data-table">
-              <thead><tr><th scope="col">#</th><th scope="col">TITLE</th></tr></thead>
+              <thead>
+                <tr>
+                  <th scope="col">#</th>
+                  <SortHeader
+                    label="TITLE"
+                    field="title"
+                    sort={sort?.key === 'title' ? sort : null}
+                    onSort={() => handleSort('title')}
+                  />
+                </tr>
+              </thead>
               <tbody>
-                {filteredTitles.length ? filteredTitles.map((title, index) => (
+                {filteredTitles.length ? sortRows(filteredTitles, sort, (title) => title).map((title, index) => (
                   <tr key={`${title}-${index}`}>
                     <td className="data-row-number">{index + 1}</td>
                     <td className="data-title-cell"><span className="data-title-marker" />{title}</td>
@@ -257,9 +410,9 @@ export default function DataFeedPage({ onSourceChange }: DataFeedPageProps) {
           </div>
         </>
       ) : activeTab === 'jobs' ? (
-        <JobTable jobs={jobsQuery.data ?? []} search={search} />
+        <JobTable jobs={jobsQuery.data ?? []} search={search} sort={sort} onSort={handleSort} />
       ) : (
-        <ApplicationTable applications={applicationsQuery.data ?? []} search={search} />
+        <ApplicationTable applications={applicationsQuery.data ?? []} search={search} sort={sort} onSort={handleSort} />
       )}
     </section>
   )
