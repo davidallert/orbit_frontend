@@ -161,6 +161,7 @@ function NordicMap({ map }: { map: JobMap }) {
           height="256"
         />
       ))}
+      <rect className="map-theme-wash" width="360" height="230" />
       <circle className="map-pin-halo" cx="180" cy="115" r="12" filter="url(#map-pin-glow)" />
       <circle className="map-pin-ring" cx="180" cy="115" r="7" />
       <circle className="map-pin-core" cx="180" cy="115" r="3" />

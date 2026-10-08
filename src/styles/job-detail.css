@@ -221,7 +221,13 @@
 }
 
 .nordic-map-tile {
-  filter: saturate(.75) brightness(.72) hue-rotate(175deg);
+  filter: invert(.82) hue-rotate(195deg) saturate(.72) brightness(.92) contrast(.95);
+}
+
+.map-theme-wash {
+  fill: #9680dc;
+  opacity: .2;
+  mix-blend-mode: color;
 }
 
 .map-pin-halo { fill: #e1c5ff; opacity: .82; }
