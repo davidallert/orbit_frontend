@@ -35,7 +35,7 @@ export default function TopBar({ mode, isError, pageTitle, sourceUrl, onToggleMo
         <div className="topbar-source">
           <span className={`source-led ${isError ? 'offline' : ''}`} />
           <span>n8n feed</span>
-          <code>{sourceEndpoint.host}{sourceEndpoint.pathname}</code>
+          <code>{sourceEndpoint.host}{sourceEndpoint.pathname}{sourceEndpoint.search}</code>
         </div>
       </div>
     </header>

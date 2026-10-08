@@ -33,18 +33,18 @@ export default function Sidebar({ activePage }: SidebarProps) {
         <a className={`nav-item ${activePage === 'overview' ? 'active' : 'muted-link'}`} href="/">
           <LayoutDashboard size={17} /><span>Overview</span>{activePage === 'overview' && <span className="nav-active-dot" />}
         </a>
-        <a className={`nav-item ${activePage === 'workflow' ? 'active' : 'muted-link'}`} href="/workflow">
-          <Zap size={17} /><span>Workflow</span>{activePage === 'workflow' && <span className="nav-active-dot" />}
-        </a>
         <a className={`nav-item ${activePage === 'feed' ? 'active' : 'muted-link'}`} href="/feed">
           <Satellite size={17} /><span>Data feed</span>{activePage === 'feed' && <span className="nav-active-dot" />}
         </a>
+        <a className={`nav-item ${activePage === 'workflow' ? 'active' : 'muted-link'}`} href="/workflow">
+          <Zap size={17} /><span>Workflow</span>{activePage === 'workflow' && <span className="nav-active-dot" />}
+        </a>
       </nav>
 
-      <div className="nav-label integrations-label">Workflow</div>
+      <div className="nav-label integrations-label">Process</div>
       <div className="automation-card">
         <span className="automation-mark" aria-hidden="true"><i /><i /><i /></span>
-        <span className="automation-copy"><strong>Method</strong><small>Discover · score · draft</small></span>
+        <span className="automation-copy"><strong>Workflow</strong><small>Discover · score · draft</small></span>
       </div>
 
       <div className="sidebar-bottom">

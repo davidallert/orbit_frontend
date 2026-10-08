@@ -10,7 +10,7 @@ import TopBar from './components/TopBar'
 import WorkflowPage from './components/WorkflowPage'
 import WorkflowPanels from './components/WorkflowPanels'
 import { fetchMetrics, metricsUrl } from './services/metrics'
-import { jobsUrl } from './services/dataFeed'
+import { singleJobUrl } from './services/dataFeed'
 import { titlesUrl } from './services/titles'
 import type { Metrics } from './types/metrics'
 import type { VisualMode } from './types/visualMode'
@@ -55,7 +55,7 @@ function App() {
           mode={visualMode}
           isError={query.isError}
           pageTitle={isWorkflowPage ? 'WORKFLOW' : isFeedPage ? 'DATA FEED' : 'OVERVIEW'}
-          sourceUrl={isDataFeedPage ? feedSourceUrl : isJobDetailPage ? jobsUrl : undefined}
+          sourceUrl={isDataFeedPage ? feedSourceUrl : isJobDetailPage && jobId ? singleJobUrl(jobId) : undefined}
           onToggleMode={() => setVisualMode((mode) => mode === 'power' ? 'performance' : 'power')}
         />
         <div className="page-wrap">
