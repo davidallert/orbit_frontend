@@ -1,0 +1,65 @@
+/* Restore the original glass card surfaces while keeping directional shadows. */
+.welcome-row {
+  border-color: #ffffff1c;
+  background: radial-gradient(ellipse at 76% 45%, #8061c14a 0, transparent 36%),
+    radial-gradient(ellipse at 93% 0, #f3a94b20 0, transparent 33%),
+    linear-gradient(117deg, #171e3aeb, #211d42e8 60%, #1b2444ea);
+  box-shadow: 6px -5px 18px rgba(188, 199, 224, .17),
+    -6px 8px 18px rgba(1, 5, 16, .46);
+  filter: none;
+}
+.metric-card {
+  border-color: #ffffff22;
+  background: linear-gradient(140deg, #ffffff12, #ffffff08);
+  box-shadow: 6px -5px 18px rgba(188, 199, 224, .17),
+    -6px 8px 18px rgba(1, 5, 16, .46);
+  filter: none;
+}
+.panel {
+  border-color: #ffffff20;
+  background: linear-gradient(140deg, #ffffff13, #ffffff08);
+  box-shadow: 6px -5px 18px rgba(188, 199, 224, .17),
+    -6px 8px 18px rgba(1, 5, 16, .46);
+  filter: none;
+}
+.welcome-row::before {
+  clip-path: none;
+  border: 0;
+  opacity: .16;
+  background: linear-gradient(115deg, transparent 20%, #fff 49%, transparent 50%);
+  mask-image: linear-gradient(90deg, transparent, #000 50%, transparent);
+}
+.metric-card::before {
+  clip-path: none;
+  inset: 0 14px auto;
+  height: 1px;
+  border: 0;
+  background: linear-gradient(90deg, transparent, #c9b5ff48, transparent);
+  opacity: .45;
+}
+.panel::before {
+  display: block;
+  clip-path: none;
+  height: auto;
+  border: 0;
+  background: radial-gradient(ellipse at 100% 0, #9377e719, transparent 54%);
+  opacity: 1;
+}
+.metric-card:hover { filter: none; }
+.metric-card::after { display: none; }
+.metric-card:hover::before {
+  background: linear-gradient(90deg, transparent, #c9b5ff48, transparent);
+  opacity: .45;
+}
+.metric-grid { gap: 30px; }
+.lower-grid { gap: 30px; margin-top: 30px; }
+.moon-disc { filter: blur(.9px); }
+.welcome-row { overflow: hidden; }
+.orbit-satellite.moon-two {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  animation: orbit-one 12s linear infinite;
+  animation-delay: -6s;
+}
+

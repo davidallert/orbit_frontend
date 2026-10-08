@@ -1,0 +1,14 @@
+/* The sidebar gets the same directional light, with less intensity than the cards. */
+.sidebar {
+  filter: drop-shadow(3px -4px 16px rgba(202, 222, 255, .18))
+    drop-shadow(-7px 10px 18px rgba(1, 5, 16, .42));
+}
+.workspace-switcher,
+.automation-card,
+.upgrade-card,
+.nav-item.active,
+.feed-receipt {
+  filter: drop-shadow(2px -3px 12px rgba(202, 222, 255, .2))
+    drop-shadow(-5px 7px 14px rgba(1, 5, 16, .4));
+}
+

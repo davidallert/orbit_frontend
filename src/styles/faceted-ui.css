@@ -1,0 +1,117 @@
+/* Faceted orbit language: precise cuts and luminous planes carry the moon's geometry through the UI. */
+.welcome-row,
+.metric-card,
+.panel,
+.status-strip,
+.workspace-switcher,
+.automation-card,
+.upgrade-card {
+  border-radius: 3px;
+}
+.welcome-row {
+  clip-path: polygon(0 15px, 15px 0, calc(100% - 36px) 0, 100% 27px, 100% calc(100% - 15px), calc(100% - 15px) 100%, 20px 100%, 0 calc(100% - 20px));
+  isolation: isolate;
+}
+.welcome-row::after {
+  position: absolute;
+  z-index: 0;
+  top: 0;
+  right: 0;
+  width: 134px;
+  height: 104px;
+  pointer-events: none;
+  content: '';
+  opacity: .3;
+  background: linear-gradient(135deg, transparent 49.5%, #c6b4ff26 50%, transparent 50.7%),
+    linear-gradient(135deg, transparent 66%, #f5bd6b19 66.5%, transparent 67.2%);
+  clip-path: polygon(27% 0, 100% 0, 100% 100%, 72% 73%, 54% 48%);
+}
+.status-strip {
+  clip-path: polygon(0 9px, 9px 0, calc(100% - 22px) 0, 100% 12px, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%);
+}
+.metric-card {
+  isolation: isolate;
+  border-radius: 0;
+  transition: transform .25s, border-color .25s, background .25s, filter .25s;
+}
+.jobs-card {
+  clip-path: polygon(0 0, calc(100% - 17px) 0, 100% 17px, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%);
+}
+.rating-card {
+  clip-path: polygon(0 13px, 13px 0, 100% 0, 100% calc(100% - 19px), calc(100% - 19px) 100%, 0 100%);
+}
+.range-card {
+  clip-path: polygon(0 0, calc(100% - 13px) 0, 100% 13px, 100% 100%, 15px 100%, 0 calc(100% - 15px));
+}
+.rating-orb { position: relative; }
+.metric-card::before,
+.panel::before {
+  display: block;
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  height: auto;
+  pointer-events: none;
+  content: '';
+  opacity: .36;
+  background: linear-gradient(135deg, #bca8ff18 0 1px, transparent 1px 100%),
+    linear-gradient(135deg, transparent 0 73%, #b3a5f414 73.2% 73.8%, transparent 74% 100%);
+  background-size: 100% 100%;
+}
+.metric-card > *,
+.panel > * {
+  position: relative;
+  z-index: 1;
+}
+.metric-card:hover {
+  filter: drop-shadow(0 0 14px #a98aff22);
+}
+.panel {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  clip-path: polygon(0 13px, 13px 0, calc(100% - 20px) 0, 100% 20px, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%);
+}
+.panel::before {
+  opacity: .27;
+  background: linear-gradient(145deg, transparent 0 76%, #a78cff20 76.2% 76.8%, transparent 77%),
+    linear-gradient(145deg, #ffffff0a, transparent 35%);
+}
+.workspace-switcher,
+.automation-card {
+  clip-path: polygon(0 9px, 9px 0, calc(100% - 13px) 0, 100% 13px, 100% 100%, 0 100%);
+}
+.upgrade-card {
+  clip-path: polygon(0 14px, 14px 0, calc(100% - 20px) 0, 100% 20px, 100% calc(100% - 11px), calc(100% - 11px) 100%, 0 100%);
+}
+.nav-item.active {
+  clip-path: polygon(0 8px, 8px 0, calc(100% - 13px) 0, 100% 13px, 100% calc(100% - 7px), calc(100% - 7px) 100%, 0 100%);
+  box-shadow: inset 3px 0 #f4b45a;
+}
+.brand-mark,
+.metric-icon,
+.flow-icon,
+.upgrade-orb {
+  border-radius: 3px 9px 3px 9px;
+  clip-path: polygon(0 5px, 5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%);
+}
+.refresh-button,
+.period-select,
+.icon-button,
+.panel-link {
+  clip-path: polygon(0 5px, 5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%);
+}
+.section-heading::before {
+  width: 3px;
+  height: 30px;
+  margin-right: 12px;
+  background: linear-gradient(#c5a9ff, #ffbf70);
+  content: '';
+  clip-path: polygon(0 0, 100% 0, 100% 75%, 0 100%);
+}
+.section-heading > div { flex: 1; }
+@media (max-width: 760px) {
+  .welcome-row { clip-path: polygon(0 12px, 12px 0, calc(100% - 22px) 0, 100% 17px, 100% calc(100% - 12px), calc(100% - 12px) 100%, 15px 100%, 0 calc(100% - 15px)); }
+  .panel { clip-path: polygon(0 10px, 10px 0, calc(100% - 14px) 0, 100% 14px, 100% calc(100% - 9px), calc(100% - 9px) 100%, 0 100%); }
+}
+

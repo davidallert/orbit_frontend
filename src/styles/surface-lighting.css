@@ -1,0 +1,69 @@
+/* Direct directional light: cool spill above/right, with a separate lower-left cast shadow. */
+.topbar { filter: none; }
+.welcome-row,
+.metric-card,
+.panel {
+  --moonlight: .3;
+  position: relative;
+  overflow: visible;
+  isolation: isolate;
+  clip-path: none;
+  border-color: transparent;
+  background: transparent;
+  box-shadow: none;
+  filter: drop-shadow(3px -4px 18px rgba(202, 222, 255, var(--moonlight)))
+    drop-shadow(-6px 8px 18px rgba(1, 5, 16, .46));
+}
+.welcome-row { --moonlight: .32; }
+.metric-card.jobs-card { --moonlight: .34; }
+.metric-card.rating-card { --moonlight: .42; }
+.metric-card.range-card { --moonlight: .5; }
+.insight-panel { --moonlight: .32; }
+.sync-panel { --moonlight: .4; }
+.welcome-row::before,
+.metric-card::before,
+.panel::before {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  pointer-events: none;
+  content: '';
+  border: 1px solid rgba(184, 201, 223, .1);
+}
+.welcome-row::before {
+  clip-path: polygon(16px 0, calc(100% - 16px) 0, 100% 16px, 100% calc(100% - 16px), calc(100% - 16px) 100%, 16px 100%, 0 calc(100% - 16px), 0 16px);
+  background: linear-gradient(112deg, #111d32f5 0%, #14243aef 65%, #15243be8 100%);
+}
+.metric-card::before {
+  clip-path: polygon(11px 0, calc(100% - 11px) 0, 100% 11px, 100% calc(100% - 11px), calc(100% - 11px) 100%, 11px 100%, 0 calc(100% - 11px), 0 11px);
+  background: linear-gradient(155deg, #142239, #101a2c 80%);
+}
+.panel::before {
+  clip-path: polygon(12px 0, calc(100% - 12px) 0, 100% 12px, 100% calc(100% - 12px), calc(100% - 12px) 100%, 12px 100%, 0 calc(100% - 12px), 0 12px);
+  background: linear-gradient(155deg, #121f34, #0e192b 85%);
+}
+.welcome-row > *,
+.metric-card > *,
+.panel > * { position: relative; z-index: 1; }
+.metric-card::after {
+  position: absolute;
+  z-index: 1;
+  top: 1px;
+  right: 14px;
+  left: 14px;
+  height: 1px;
+  pointer-events: none;
+  content: '';
+  background: linear-gradient(90deg, transparent, #d2e0ec22, transparent);
+}
+.metric-card:hover { background: transparent; border-color: transparent; }
+.metric-card:hover::before { background: linear-gradient(155deg, #192941, #121e31 80%); }
+@media (max-width: 760px) {
+  .welcome-row::before { clip-path: polygon(9px 0, calc(100% - 9px) 0, 100% 9px, 100% calc(100% - 9px), calc(100% - 9px) 100%, 9px 100%, 0 calc(100% - 9px), 0 9px); }
+  .metric-card::before,
+  .panel::before { clip-path: polygon(9px 0, calc(100% - 9px) 0, 100% 9px, 100% calc(100% - 9px), calc(100% - 9px) 100%, 9px 100%, 0 calc(100% - 9px), 0 9px); }
+  .metric-card.jobs-card { --moonlight: .34; }
+  .metric-card.rating-card { --moonlight: .3; }
+  .metric-card.range-card { --moonlight: .25; }
+  .sync-panel { --moonlight: .3; }
+}
