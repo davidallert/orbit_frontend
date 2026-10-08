@@ -8,10 +8,14 @@ import TopBar from './components/TopBar'
 import WorkflowPanels from './components/WorkflowPanels'
 import { fetchMetrics, metricsUrl } from './services/metrics'
 import type { Metrics } from './types/metrics'
+import type { VisualMode } from './types/visualMode'
 import './styles/app.css'
 
 function App() {
-  const [animationsEnabled, setAnimationsEnabled] = useState(true)
+  const [visualMode, setVisualMode] = useState<VisualMode>(() =>
+    window.matchMedia('(max-width: 760px), (pointer: coarse)').matches ? 'performance' : 'power',
+  )
+  const powerModeEnabled = visualMode === 'power'
   const query = useQuery({
     queryKey: ['workflow-metrics', metricsUrl],
     queryFn: fetchMetrics,
@@ -23,14 +27,14 @@ function App() {
   const metrics: Metrics | undefined = query.data
 
   return (
-    <div className={`app-shell${animationsEnabled ? '' : ' animations-off'}`}>
-      <SpaceEffects key={animationsEnabled ? 'enabled' : 'disabled'} animationsEnabled={animationsEnabled} />
+    <div className={`app-shell ${visualMode}-mode`}>
+      <SpaceEffects key={visualMode} powerModeEnabled={powerModeEnabled} />
       <Sidebar />
       <main className="main-content" id="overview">
         <TopBar
-          animationsEnabled={animationsEnabled}
+          mode={visualMode}
           isError={query.isError}
-          onToggleAnimations={() => setAnimationsEnabled((enabled) => !enabled)}
+          onToggleMode={() => setVisualMode((mode) => mode === 'power' ? 'performance' : 'power')}
         />
         <div className="page-wrap">
           <DashboardIntro

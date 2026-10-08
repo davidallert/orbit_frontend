@@ -1,13 +1,17 @@
 import { Pause, Play } from 'lucide-react'
 import { metricsEndpoint } from '../services/metrics'
+import type { VisualMode } from '../types/visualMode'
 
 type TopBarProps = {
-  animationsEnabled: boolean
+  mode: VisualMode
   isError: boolean
-  onToggleAnimations: () => void
+  onToggleMode: () => void
 }
 
-export default function TopBar({ animationsEnabled, isError, onToggleAnimations }: TopBarProps) {
+export default function TopBar({ mode, isError, onToggleMode }: TopBarProps) {
+  const powerModeEnabled = mode === 'power'
+  const nextModeLabel = powerModeEnabled ? 'Performance' : 'Power'
+
   return (
     <header className="topbar">
       <div className="breadcrumbs">
@@ -15,15 +19,15 @@ export default function TopBar({ animationsEnabled, isError, onToggleAnimations 
       </div>
       <div className="topbar-tools">
         <button
-          className="motion-toggle"
+          className="mode-toggle"
           type="button"
-          aria-label={animationsEnabled ? 'Turn animations off' : 'Turn animations on'}
-          aria-pressed={!animationsEnabled}
-          title={animationsEnabled ? 'Turn animations off' : 'Turn animations on'}
-          onClick={onToggleAnimations}
+          aria-label={`${mode} mode`}
+          aria-pressed={powerModeEnabled}
+          title={`Switch to ${nextModeLabel} mode`}
+          onClick={onToggleMode}
         >
-          {animationsEnabled ? <Pause size={13} /> : <Play size={13} />}
-          <span>{animationsEnabled ? 'Motion on' : 'Motion off'}</span>
+          {powerModeEnabled ? <Pause size={13} /> : <Play size={13} />}
+          <span>{mode === 'power' ? 'Power mode' : 'Performance mode'}</span>
         </button>
         <div className="topbar-source">
           <span className={`source-led ${isError ? 'offline' : ''}`} />

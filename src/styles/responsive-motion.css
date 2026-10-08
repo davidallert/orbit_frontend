@@ -1,44 +1,12 @@
-/* Mobile keeps the space scene, but avoids continuously filtering and repainting it. */
-@media (max-width: 760px), (pointer: coarse) {
-  .space-effects,
-  .shooting-star {
-    display: none;
-  }
-
-  .app-shell::after { animation: none; }
-
-  .cloud-bank { filter: none; }
-  .cloud-bank-far,
-  .cloud-bank-mid,
-  .cloud-bank-near,
-  .cloud-bank-foam {
-    animation: none;
-  }
-  .cloud-bank-far { filter: blur(4px); }
-  .cloud-bank-mid { filter: blur(3px); }
-  .cloud-bank-near { filter: blur(2px); }
-  .cloud-bank-foam { filter: blur(1px); }
-  .cloud-texture,
-  .cloud-bellies,
-  .cloud-highlight,
-  .cloud-bank-star { display: none; }
-
-  .moon-disc {
-    animation: none;
-    box-shadow: 0 0 24px #b9d1ff40, 0 0 72px #8eb2ff28;
-  }
-
-  .earth-atmosphere,
-  .cloud-a,
-  .cloud-b,
-  .orbit-rocket { animation: none; }
-}
-
 @media (max-width: 760px) {
   .hero-orbit { display: none; }
   .welcome-copy { width: 100%; max-width: none; }
   .welcome-row h1,
   .welcome-subtitle { max-width: none; }
+}
+
+@media (pointer: coarse) {
+  .hero-orbit { display: none; }
 }
 
 .topbar-tools {
@@ -47,7 +15,7 @@
   gap: 16px;
 }
 
-.motion-toggle {
+.mode-toggle {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -62,44 +30,58 @@
   cursor: pointer;
 }
 
-.motion-toggle:hover {
+.mode-toggle:hover {
   border-color: #c5a9ff70;
   color: #f0eaff;
   background: #ffffff10;
 }
 
-.app-shell.animations-off,
-.app-shell.animations-off::before,
-.app-shell.animations-off::after,
-.app-shell.animations-off *,
-.app-shell.animations-off *::before,
-.app-shell.animations-off *::after {
+.app-shell.performance-mode,
+.app-shell.performance-mode::before,
+.app-shell.performance-mode::after,
+.app-shell.performance-mode *,
+.app-shell.performance-mode *::before,
+.app-shell.performance-mode *::after {
   animation: none !important;
   transition: none !important;
   scroll-behavior: auto !important;
 }
 
-.app-shell.animations-off,
-.app-shell.animations-off button,
-.app-shell.animations-off a {
+.app-shell.performance-mode,
+.app-shell.performance-mode button,
+.app-shell.performance-mode a {
   cursor: auto;
 }
 
-.app-shell.animations-off button,
-.app-shell.animations-off a {
+.app-shell.performance-mode button,
+.app-shell.performance-mode a {
   cursor: pointer;
 }
 
-.app-shell.animations-off .space-effects,
-.app-shell.animations-off .shooting-star,
-.app-shell.animations-off .space-cursor,
-.app-shell.animations-off .orbit-moon.moon-one,
-.app-shell.animations-off .orbit-satellite.moon-two {
+.app-shell.performance-mode *,
+.app-shell.performance-mode *::before,
+.app-shell.performance-mode *::after {
+  backdrop-filter: none !important;
+  box-shadow: none !important;
+  clip-path: none !important;
+  filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+.app-shell.performance-mode::before,
+.app-shell.performance-mode::after,
+.app-shell.performance-mode .space-effects,
+.app-shell.performance-mode .shooting-star,
+.app-shell.performance-mode .space-cursor,
+.app-shell.performance-mode .moonlight,
+.app-shell.performance-mode .cloud-bank,
+.app-shell.performance-mode .orbit-moon.moon-one,
+.app-shell.performance-mode .orbit-satellite.moon-two {
   display: none;
 }
 
 @media (max-width: 500px) {
   .topbar-tools { gap: 7px; }
-  .motion-toggle { width: 30px; padding: 0; }
-  .motion-toggle span { display: none; }
+  .mode-toggle { width: 30px; padding: 0; }
+  .mode-toggle span { display: none; }
 }
