@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { ArrowDown, ArrowUp, ArrowUpDown, Database, FileText, RefreshCw, Search, Tags } from 'lucide-react'
+import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp, ArrowUpDown, Clock3, Database, FileText, RefreshCw, Search, Tags } from 'lucide-react'
 import { applicationsUrl, fetchApplications, fetchJobs, jobsUrl } from '../services/dataFeed'
 import { fetchTitles, titlesUrl } from '../services/titles'
 import type { FeedApplication, FeedJob } from '../types/dataFeed'
@@ -8,6 +8,8 @@ import type { FeedApplication, FeedJob } from '../types/dataFeed'
 type DataTab = 'titles' | 'jobs' | 'applications'
 type SortDirection = 'asc' | 'desc'
 type SortState = { key: string; direction: SortDirection } | null
+type PageSize = 50 | 'all'
+type PaginationState = { page: number; pageSize: PageSize }
 type DataFeedPageProps = {
   onSourceChange: (url: string) => void
 }
@@ -37,6 +39,84 @@ function initialFeedTab(): DataTab {
 
 function jobDetailsHref(jobId: number, view: DataTab): string {
   return `/jobs/${jobId}?view=${view}`
+}
+
+function initialPaginationState(): Record<DataTab, PaginationState> {
+  const defaultState = { page: 1, pageSize: 50 as PageSize }
+  return {
+    titles: defaultState,
+    jobs: defaultState,
+    applications: defaultState,
+  }
+}
+
+function formatFreshness(timestamp: number, now: number): string {
+  const elapsedMinutes = Math.max(0, Math.floor((now - timestamp) / 60_000))
+  if (elapsedMinutes < 1) return 'Updated just now'
+  if (elapsedMinutes < 60) return `Updated ${elapsedMinutes}m ago`
+  if (elapsedMinutes < 24 * 60) return `Updated ${Math.floor(elapsedMinutes / 60)}h ago`
+  return `Updated ${new Intl.DateTimeFormat(undefined, { dateStyle: 'medium' }).format(timestamp)}`
+}
+
+function PaginationControls({
+  total,
+  pagination,
+  onPageChange,
+  onPageSizeChange,
+}: {
+  total: number
+  pagination: PaginationState
+  onPageChange: (page: number) => void
+  onPageSizeChange: (pageSize: PageSize) => void
+}) {
+  const pageCount = pagination.pageSize === 'all' ? 1 : Math.max(1, Math.ceil(total / pagination.pageSize))
+  const page = Math.min(pagination.page, pageCount)
+  const firstRow = total === 0 ? 0 : pagination.pageSize === 'all' ? 1 : (page - 1) * pagination.pageSize + 1
+  const lastRow = pagination.pageSize === 'all' ? total : Math.min(page * pagination.pageSize, total)
+
+  return (
+    <div className="data-pagination">
+      <span className="data-pagination-range">
+        {total === 0 ? 'No rows' : `Rows ${firstRow.toLocaleString()}–${lastRow.toLocaleString()} of ${total.toLocaleString()}`}
+      </span>
+      <div className="data-pagination-actions">
+        <label className="data-page-size">
+          <span>Rows</span>
+          <select
+            aria-label="Rows per page"
+            value={pagination.pageSize}
+            onChange={(event) => onPageSizeChange(event.target.value === 'all' ? 'all' : 50)}
+          >
+            <option value={50}>50</option>
+            <option value="all">All</option>
+          </select>
+        </label>
+        {pagination.pageSize !== 'all' && (
+          <>
+            <span className="data-page-number">Page {page.toLocaleString()} of {pageCount.toLocaleString()}</span>
+            <button
+              className="data-page-button"
+              type="button"
+              aria-label="Previous page"
+              disabled={page <= 1}
+              onClick={() => onPageChange(page - 1)}
+            >
+              <ArrowLeft size={13} />
+            </button>
+            <button
+              className="data-page-button"
+              type="button"
+              aria-label="Next page"
+              disabled={page >= pageCount}
+              onClick={() => onPageChange(page + 1)}
+            >
+              <ArrowRight size={13} />
+            </button>
+          </>
+        )}
+      </div>
+    </div>
+  )
 }
 
 function matchingText(values: Array<string | null | undefined>, search: string): boolean {
@@ -109,11 +189,17 @@ function JobTable({
   search,
   sort,
   onSort,
+  pagination,
+  onPageChange,
+  onPageSizeChange,
 }: {
   jobs: FeedJob[]
   search: string
   sort: SortState
   onSort: (field: string) => void
+  pagination: PaginationState
+  onPageChange: (page: number) => void
+  onPageSizeChange: (pageSize: PageSize) => void
 }) {
   const filteredRows = jobs.filter((job) => matchingText([
     String(job.job_id),
@@ -122,7 +208,7 @@ function JobTable({
     job.municipality,
     job.rating,
   ], search))
-  const rows = sortRows(filteredRows, sort, (job, key) => {
+  const sortedRows = sortRows(filteredRows, sort, (job, key) => {
     if (key === 'job_id') return job.job_id
     if (key === 'headline') return job.headline
     if (key === 'employer') return job.employer
@@ -131,6 +217,11 @@ function JobTable({
     if (key === 'deadline') return dateValue(job.deadline)
     return null
   })
+  const pageCount = pagination.pageSize === 'all' ? 1 : Math.max(1, Math.ceil(sortedRows.length / pagination.pageSize))
+  const page = Math.min(pagination.page, pageCount)
+  const rows = pagination.pageSize === 'all'
+    ? sortedRows
+    : sortedRows.slice((page - 1) * pagination.pageSize, page * pagination.pageSize)
 
   return (
     <>
@@ -169,9 +260,15 @@ function JobTable({
         </table>
       </div>
       <div className="data-table-footer">
-        <span>Showing {rows.length.toLocaleString()} of {jobs.length.toLocaleString()} jobs</span>
+        <span>{filteredRows.length.toLocaleString()} of {jobs.length.toLocaleString()} jobs match</span>
         <span>Open any row to view job details</span>
       </div>
+      <PaginationControls
+        total={sortedRows.length}
+        pagination={{ ...pagination, page }}
+        onPageChange={onPageChange}
+        onPageSizeChange={onPageSizeChange}
+      />
     </>
   )
 }
@@ -181,11 +278,17 @@ function ApplicationTable({
   search,
   sort,
   onSort,
+  pagination,
+  onPageChange,
+  onPageSizeChange,
 }: {
   applications: FeedApplication[]
   search: string
   sort: SortState
   onSort: (field: string) => void
+  pagination: PaginationState
+  onPageChange: (page: number) => void
+  onPageSizeChange: (pageSize: PageSize) => void
 }) {
   const filteredRows = applications.filter((application) => matchingText([
     application.job_id === null ? null : String(application.job_id),
@@ -194,7 +297,7 @@ function ApplicationTable({
     application.rating,
     application.applied ? 'applied' : 'not applied',
   ], search))
-  const rows = sortRows(filteredRows, sort, (application, key) => {
+  const sortedRows = sortRows(filteredRows, sort, (application, key) => {
     if (key === 'job_id') return application.job_id
     if (key === 'headline') return application.headline
     if (key === 'employer') return application.employer
@@ -202,6 +305,11 @@ function ApplicationTable({
     if (key === 'applied') return application.applied
     return null
   })
+  const pageCount = pagination.pageSize === 'all' ? 1 : Math.max(1, Math.ceil(sortedRows.length / pagination.pageSize))
+  const page = Math.min(pagination.page, pageCount)
+  const rows = pagination.pageSize === 'all'
+    ? sortedRows
+    : sortedRows.slice((page - 1) * pagination.pageSize, page * pagination.pageSize)
 
   return (
     <>
@@ -239,9 +347,15 @@ function ApplicationTable({
         </table>
       </div>
       <div className="data-table-footer">
-        <span>Showing {rows.length.toLocaleString()} of {applications.length.toLocaleString()} applications</span>
+        <span>{filteredRows.length.toLocaleString()} of {applications.length.toLocaleString()} applications match</span>
         <span>Open any row to view the linked job</span>
       </div>
+      <PaginationControls
+        total={sortedRows.length}
+        pagination={{ ...pagination, page }}
+        onPageChange={onPageChange}
+        onPageSizeChange={onPageSizeChange}
+      />
     </>
   )
 }
@@ -249,6 +363,8 @@ function ApplicationTable({
 export default function DataFeedPage({ onSourceChange }: DataFeedPageProps) {
   const [search, setSearch] = useState('')
   const [activeTab, setActiveTab] = useState<DataTab>(initialFeedTab)
+  const [paginationByTab, setPaginationByTab] = useState<Record<DataTab, PaginationState>>(initialPaginationState)
+  const [clock, setClock] = useState(Date.now)
   const [sortByTab, setSortByTab] = useState<Record<DataTab, SortState>>({
     titles: null,
     jobs: null,
@@ -257,6 +373,10 @@ export default function DataFeedPage({ onSourceChange }: DataFeedPageProps) {
   const sort = sortByTab[activeTab]
 
   function handleSort(field: string) {
+    setPaginationByTab((current) => ({
+      ...current,
+      [activeTab]: { ...current[activeTab], page: 1 },
+    }))
     setSortByTab((current) => ({
       ...current,
       [activeTab]: current[activeTab]?.key === field
@@ -267,6 +387,24 @@ export default function DataFeedPage({ onSourceChange }: DataFeedPageProps) {
   useEffect(() => {
     onSourceChange(activeTab === 'titles' ? titlesUrl : activeTab === 'jobs' ? jobsUrl : applicationsUrl)
   }, [activeTab, onSourceChange])
+  useEffect(() => {
+    const timer = window.setInterval(() => setClock(Date.now()), 60_000)
+    return () => window.clearInterval(timer)
+  }, [])
+
+  function updatePage(page: number) {
+    setPaginationByTab((current) => ({
+      ...current,
+      [activeTab]: { ...current[activeTab], page },
+    }))
+  }
+
+  function updatePageSize(pageSize: PageSize) {
+    setPaginationByTab((current) => ({
+      ...current,
+      [activeTab]: { page: 1, pageSize },
+    }))
+  }
 
   const titlesQuery = useQuery({
     queryKey: ['workflow-titles', titlesUrl],
@@ -304,6 +442,26 @@ export default function DataFeedPage({ onSourceChange }: DataFeedPageProps) {
       ? jobsQuery.data?.length
       : applicationsQuery.data?.length
   const activeLabel = tabs.find(({ id }) => id === activeTab)?.label ?? 'Records'
+  const activePagination = paginationByTab[activeTab]
+  const sortedTitles = useMemo(
+    () => sortRows(filteredTitles, sort, (title) => title),
+    [filteredTitles, sort],
+  )
+  const titlePageCount = activePagination.pageSize === 'all'
+    ? 1
+    : Math.max(1, Math.ceil(sortedTitles.length / activePagination.pageSize))
+  const titlePage = Math.min(activePagination.page, titlePageCount)
+  const visibleTitles = activePagination.pageSize === 'all'
+    ? sortedTitles
+    : sortedTitles.slice((titlePage - 1) * activePagination.pageSize, titlePage * activePagination.pageSize)
+
+  function updateSearch(value: string) {
+    setSearch(value)
+    setPaginationByTab((current) => ({
+      ...current,
+      [activeTab]: { ...current[activeTab], page: 1 },
+    }))
+  }
 
   return (
     <section className="data-feed-page">
@@ -341,6 +499,17 @@ export default function DataFeedPage({ onSourceChange }: DataFeedPageProps) {
             </button>
           ))}
         </div>
+        <div className="data-feed-freshness" role="status" aria-live="polite">
+          <Clock3 size={12} />
+          <span>
+            {activeQuery.dataUpdatedAt
+              ? formatFreshness(activeQuery.dataUpdatedAt, clock)
+              : activeQuery.isFetching
+                ? 'Loading latest data'
+                : 'Not loaded yet'}
+          </span>
+          {activeQuery.isFetching && <span className="freshness-refreshing">· Refreshing</span>}
+        </div>
         <div className="data-feed-actions">
           <label className="data-search">
             <Search size={14} aria-hidden="true" />
@@ -349,7 +518,7 @@ export default function DataFeedPage({ onSourceChange }: DataFeedPageProps) {
               aria-label={`Filter ${activeLabel.toLowerCase()}`}
               placeholder={`Filter ${activeLabel.toLowerCase()}`}
               value={search}
-              onChange={(event) => setSearch(event.target.value)}
+              onChange={(event) => updateSearch(event.target.value)}
             />
           </label>
           <button
@@ -393,9 +562,13 @@ export default function DataFeedPage({ onSourceChange }: DataFeedPageProps) {
                 </tr>
               </thead>
               <tbody>
-                {filteredTitles.length ? sortRows(filteredTitles, sort, (title) => title).map((title, index) => (
+                {visibleTitles.length ? visibleTitles.map((title, index) => (
                   <tr key={`${title}-${index}`}>
-                    <td className="data-row-number">{index + 1}</td>
+                    <td className="data-row-number">
+                      {activePagination.pageSize === 'all'
+                        ? index + 1
+                        : (titlePage - 1) * activePagination.pageSize + index + 1}
+                    </td>
                     <td className="data-title-cell"><span className="data-title-marker" />{title}</td>
                   </tr>
                 )) : (
@@ -405,14 +578,36 @@ export default function DataFeedPage({ onSourceChange }: DataFeedPageProps) {
             </table>
           </div>
           <div className="data-table-footer">
-            <span>Showing {filteredTitles.length.toLocaleString()} of {(titlesQuery.data?.length ?? 0).toLocaleString()} titles</span>
+            <span>{filteredTitles.length.toLocaleString()} of {(titlesQuery.data?.length ?? 0).toLocaleString()} titles match</span>
             <span>Source · n8n titles feed</span>
           </div>
+          <PaginationControls
+            total={filteredTitles.length}
+            pagination={{ ...activePagination, page: titlePage }}
+            onPageChange={updatePage}
+            onPageSizeChange={updatePageSize}
+          />
         </>
       ) : activeTab === 'jobs' ? (
-        <JobTable jobs={jobsQuery.data ?? []} search={search} sort={sort} onSort={handleSort} />
+        <JobTable
+          jobs={jobsQuery.data ?? []}
+          search={search}
+          sort={sort}
+          onSort={handleSort}
+          pagination={activePagination}
+          onPageChange={updatePage}
+          onPageSizeChange={updatePageSize}
+        />
       ) : (
-        <ApplicationTable applications={applicationsQuery.data ?? []} search={search} sort={sort} onSort={handleSort} />
+        <ApplicationTable
+          applications={applicationsQuery.data ?? []}
+          search={search}
+          sort={sort}
+          onSort={handleSort}
+          pagination={activePagination}
+          onPageChange={updatePage}
+          onPageSizeChange={updatePageSize}
+        />
       )}
     </section>
   )

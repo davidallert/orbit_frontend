@@ -72,6 +72,13 @@ function displayDate(value: string | null): string | null {
     : new Intl.DateTimeFormat(undefined, { dateStyle: 'medium' }).format(date)
 }
 
+function formatCoverLetter(value: string): string {
+  return value
+    .replace(/\\+r\\+n/g, '\n')
+    .replace(/\\+n/g, '\n')
+    .replace(/\\+r/g, '\n')
+}
+
 function countryFlag(country: string | null): string {
   const normalized = country?.trim().toLocaleLowerCase()
   if (normalized === 'sverige' || normalized === 'sweden' || normalized === 'se') return '🇸🇪'
@@ -187,12 +194,13 @@ function JobContent({ job }: { job: JobDetails }) {
   const applicationUrl = safeLink(job.url_application)
   const publicationDate = displayDate(job.publication_date)
   const deadline = displayDate(job.deadline)
-  const hasCoverLetter = Boolean(job.cover_letter?.trim())
+  const coverLetter = job.cover_letter ? formatCoverLetter(job.cover_letter) : null
+  const hasCoverLetter = Boolean(coverLetter?.trim())
 
   async function copyCoverLetter() {
-    if (!job.cover_letter) return
+    if (!coverLetter) return
     try {
-      await navigator.clipboard.writeText(job.cover_letter)
+      await navigator.clipboard.writeText(coverLetter)
       setCopyStatus('copied')
     } catch {
       setCopyStatus('error')
@@ -252,7 +260,7 @@ function JobContent({ job }: { job: JobDetails }) {
               {copyStatus === 'error' && (
                 <p className="job-copy-error" role="alert">Couldn’t copy automatically. Select the letter text and copy it manually.</p>
               )}
-              <div className="job-cover-letter">{job.cover_letter}</div>
+              <div className="job-cover-letter">{coverLetter}</div>
             </section>
           )}
         </div>

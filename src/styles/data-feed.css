@@ -71,6 +71,19 @@
   gap: 6px;
 }
 
+.data-feed-freshness {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex: 0 0 auto;
+  color: #929bb0;
+  font-size: 8px;
+  white-space: nowrap;
+}
+
+.data-feed-freshness > svg { color: #aaa6c5; }
+.freshness-refreshing { color: #c5a9ff; }
+
 .data-tab {
   display: inline-flex;
   align-items: center;
@@ -161,7 +174,7 @@
   height: 39px;
   border-bottom: 1px solid #ffffff16;
   color: #8f99b0;
-  background: #ffffff04;
+  background: #0c1326a8;
   font-size: 8px;
   font-weight: 600;
   letter-spacing: .7px;
@@ -328,6 +341,72 @@
   font-size: 9px;
 }
 
+.data-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 6px 2px 12px;
+  color: #929bb0;
+  font-size: 9px;
+}
+
+.data-pagination-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.data-page-size {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.data-page-size select {
+  min-height: 27px;
+  padding: 0 19px 0 7px;
+  border: 1px solid #ffffff1a;
+  color: #d8d4e8;
+  background: #ffffff04;
+  font: inherit;
+  cursor: pointer;
+}
+
+.data-page-size select:focus-visible {
+  outline: 1px solid #c5a9ff75;
+  outline-offset: 2px;
+}
+
+.data-page-number {
+  min-width: 72px;
+  color: #aaa6c5;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+.data-page-button {
+  display: grid;
+  place-items: center;
+  width: 27px;
+  height: 27px;
+  border: 1px solid #ffffff1a;
+  color: #c6b5f2;
+  background: #ffffff06;
+  cursor: pointer;
+}
+
+.data-page-button:hover:not(:disabled) {
+  border-color: #c5a9ff55;
+  background: #a981ff12;
+}
+
+.data-page-button:disabled {
+  color: #727b91;
+  opacity: .55;
+  cursor: not-allowed;
+}
+
 .app-shell.power-mode .data-feed-total,
 .app-shell.power-mode .data-feed-toolbar,
 .app-shell.power-mode .data-table-shell {
@@ -346,6 +425,9 @@
   .data-feed-toolbar { align-items: stretch; flex-direction: column; }
   .data-tabs { flex-wrap: wrap; overflow: visible; }
   .data-tab { flex: 0 0 auto; }
+  .data-feed-freshness { min-height: 22px; }
   .data-feed-actions { width: 100%; }
   .data-search { flex: 1; }
+  .data-pagination { align-items: flex-start; flex-direction: column; }
+  .data-pagination-actions { width: 100%; justify-content: flex-end; }
 }
