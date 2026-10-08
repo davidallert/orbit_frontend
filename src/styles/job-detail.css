@@ -105,6 +105,40 @@
   margin-bottom: 17px;
 }
 
+.job-copy-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 30px;
+  margin-left: auto;
+  padding: 0 9px;
+  border: 1px solid #c5a9ff38;
+  color: #d8c8ff;
+  background: #a981ff0c;
+  font: inherit;
+  font-size: 9px;
+  cursor: pointer;
+}
+
+.job-copy-button:hover {
+  border-color: #c5a9ff70;
+  background: #a981ff18;
+}
+
+.job-copy-button.copied {
+  border-color: #8bbba53a;
+  color: #a6d9c2;
+  background: #8bbba510;
+}
+
+.job-copy-error {
+  margin: -5px 0 12px;
+  color: #e0a6b0;
+  font-size: 9px;
+  line-height: 1.5;
+}
+
 .job-detail-section-icon {
   width: 32px;
   height: 32px;
@@ -175,60 +209,24 @@
   overflow: hidden;
   height: 185px;
   border: 1px solid #ffffff20;
-  background: #10182b;
+  background: #19334f;
 }
 
 .nordic-map {
   display: block;
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
 }
 
-.map-grid path {
-  fill: none;
-  stroke: #8d9ab51a;
-  stroke-width: .7;
+.nordic-map-tile {
+  filter: saturate(.75) brightness(.72) hue-rotate(175deg);
 }
 
-.map-landform {
-  fill: url(#map-land);
-  stroke: #abb2ce65;
-  stroke-width: 1.2;
-}
-
-.map-finland { fill: #424966; }
-
-.map-coastline {
-  fill: none;
-  stroke: #c0b9e455;
-  stroke-width: 1;
-  stroke-dasharray: 2 3;
-}
-
-.map-roads path {
-  fill: none;
-  stroke: #d5b98655;
-  stroke-width: 1.4;
-}
-
-.map-roads path + path {
-  stroke: #c9c4e044;
-  stroke-width: .8;
-}
-
-.map-place-labels text {
-  fill: #c4c3d599;
-  font: 5px ui-monospace, SFMono-Regular, Consolas, monospace;
-  letter-spacing: .5px;
-}
-
-.map-pin-halo { fill: #e1c5ff; opacity: .8; }
+.map-pin-halo { fill: #e1c5ff; opacity: .82; }
 .map-pin-ring { fill: #d8c8ff; stroke: #120f25; stroke-width: 2; }
 .map-pin-core { fill: #fff; }
-
-.app-shell.performance-mode .map-pin-halo {
-  filter: none;
-}
 
 .job-map-coordinate {
   position: absolute;
@@ -255,6 +253,26 @@
 }
 
 .job-map-link:hover { color: #eeeafa; }
+
+.job-map-attribution {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 6px;
+  color: #929bb0;
+  font-size: 7px;
+}
+
+.job-map-attribution a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.job-map-attribution a:hover {
+  color: #d8c8ff;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
 
 .job-map-unavailable {
   margin: 0;

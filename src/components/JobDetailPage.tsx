@@ -1,9 +1,11 @@
-import { createElement, Fragment, type ReactNode } from 'react'
+import { createElement, Fragment, useState, type ReactNode } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import {
   ArrowLeft,
   BriefcaseBusiness,
   CalendarDays,
+  Check,
+  Copy,
   ExternalLink,
   FileText,
   MapPin,
@@ -79,61 +81,89 @@ function countryFlag(country: string | null): string {
   return '🌐'
 }
 
-type MapPoint = {
+type MapTile = {
+  key: string
+  src: string
   x: number
   y: number
 }
 
-function mapPoint(job: JobDetails): MapPoint | null {
+type JobMap = {
+  tiles: MapTile[]
+  location: string
+  latitude: number
+  longitude: number
+}
+
+function mapTiles(job: JobDetails): JobMap | null {
   if (job.latitude === null || job.longitude === null) return null
-  const west = 4
-  const east = 32
-  const south = 54
-  const north = 71
-  if (job.longitude < west || job.longitude > east || job.latitude < south || job.latitude > north) return null
+
+  const zoom = 4
+  const tileSize = 256
+  const tileCount = 2 ** zoom
+  const latitude = Math.max(-85.05112878, Math.min(85.05112878, job.latitude))
+  const latitudeRadians = latitude * Math.PI / 180
+  const centerX = ((job.longitude + 180) / 360) * tileCount * tileSize
+  const centerY = (
+    (1 - Math.log(Math.tan(latitudeRadians) + 1 / Math.cos(latitudeRadians)) / Math.PI) / 2
+  ) * tileCount * tileSize
+  const originX = 180 - centerX
+  const originY = 115 - centerY
+  const firstColumn = Math.floor(-originX / tileSize)
+  const lastColumn = Math.ceil((360 - originX) / tileSize)
+  const firstRow = Math.floor(-originY / tileSize)
+  const lastRow = Math.ceil((230 - originY) / tileSize)
+  const tiles: MapTile[] = []
+
+  for (let column = firstColumn; column < lastColumn; column += 1) {
+    for (let row = firstRow; row < lastRow; row += 1) {
+      if (row < 0 || row >= tileCount) continue
+      const wrappedColumn = ((column % tileCount) + tileCount) % tileCount
+      tiles.push({
+        key: `${zoom}-${wrappedColumn}-${row}`,
+        src: `https://tile.openstreetmap.org/${zoom}/${wrappedColumn}/${row}.png`,
+        x: originX + column * tileSize,
+        y: originY + row * tileSize,
+      })
+    }
+  }
+
   return {
-    x: 20 + ((job.longitude - west) / (east - west)) * 320,
-    y: 14 + ((north - job.latitude) / (north - south)) * 200,
+    tiles,
+    location: [job.city, job.region, job.country].filter(Boolean).join(', ') || 'job location',
+    latitude: job.latitude,
+    longitude: job.longitude,
   }
 }
 
-function NordicMap({ point, location }: { point: MapPoint; location: string }) {
+function NordicMap({ map }: { map: JobMap }) {
   return (
-    <svg className="nordic-map" viewBox="0 0 360 230" role="img" aria-label={`Map showing ${location} in northern Europe`}>
+    <svg
+      className="nordic-map"
+      viewBox="0 0 360 230"
+      preserveAspectRatio="xMidYMid slice"
+      role="img"
+      aria-label={`Map showing ${map.location}`}
+    >
       <defs>
-        <linearGradient id="map-water" x1="0" x2="1" y1="0" y2="1">
-          <stop offset="0%" stopColor="#263452" />
-          <stop offset="100%" stopColor="#172139" />
-        </linearGradient>
-        <linearGradient id="map-land" x1="0" x2="1" y1="0" y2="1">
-          <stop offset="0%" stopColor="#555274" />
-          <stop offset="100%" stopColor="#343c5b" />
-        </linearGradient>
         <filter id="map-pin-glow" x="-200%" y="-200%" width="500%" height="500%">
           <feGaussianBlur stdDeviation="5" />
         </filter>
       </defs>
-      <rect width="360" height="230" fill="url(#map-water)" />
-      <g className="map-grid">
-        <path d="M0 46H360M0 92H360M0 138H360M0 184H360M72 0V230M144 0V230M216 0V230M288 0V230" />
-      </g>
-      <path className="map-landform" d="M115 6C129 13 131 29 124 41C119 52 128 62 122 75C116 87 126 98 120 110C114 123 127 134 119 148C113 160 126 171 119 182C112 193 122 202 114 214L93 225L0 230V0H105C108 2 112 4 115 6Z" />
-      <path className="map-landform" d="M218 18C237 22 251 38 251 58C250 78 242 96 246 115C250 134 237 148 241 166C245 182 229 195 225 210C221 225 205 232 190 226C175 220 162 221 151 209C141 199 135 188 123 181C113 174 106 163 112 151C118 140 109 128 115 117C122 105 114 94 121 83C128 72 122 59 132 49C142 39 142 28 155 22C173 13 198 9 218 18Z" />
-      <path className="map-landform map-finland" d="M252 27C273 24 294 34 306 51C318 68 315 84 329 99C339 110 338 127 329 140C320 153 317 168 304 179C293 189 285 204 270 207C256 208 245 197 241 184C236 171 244 157 238 145C232 132 245 118 241 105C237 92 250 78 245 65C241 51 242 37 252 27Z" />
-      <path className="map-coastline" d="M218 18C237 22 251 38 251 58C250 78 242 96 246 115C250 134 237 148 241 166C245 182 229 195 225 210C221 225 205 232 190 226C175 220 162 221 151 209C141 199 135 188 123 181" />
-      <g className="map-roads">
-        <path d="M142 198C163 179 177 159 191 143S213 104 222 76M156 207C177 190 198 174 216 160S235 133 244 119M130 162C157 153 181 146 204 130S232 99 244 83M172 222C183 199 193 182 202 160" />
-      </g>
-      <g className="map-place-labels">
-        <text x="188" y="170">STOCKHOLM</text>
-        <text x="123" y="211">GÖTEBORG</text>
-        <text x="211" y="112">OSLO</text>
-        <text x="275" y="131">FINLAND</text>
-        <text x="165" y="92">SWEDEN</text>
-      </g>
-      <circle className="map-pin-halo" cx={point.x} cy={point.y} r="12" filter="url(#map-pin-glow)" />
-      <circle className="map-pin-ring" cx={point.x} cy={point.y} r="7" />
-      <circle className="map-pin-core" cx={point.x} cy={point.y} r="3" />
+      {map.tiles.map((tile) => (
+        <image
+          className="nordic-map-tile"
+          key={tile.key}
+          href={tile.src}
+          x={tile.x}
+          y={tile.y}
+          width="256"
+          height="256"
+        />
+      ))}
+      <circle className="map-pin-halo" cx="180" cy="115" r="12" filter="url(#map-pin-glow)" />
+      <circle className="map-pin-ring" cx="180" cy="115" r="7" />
+      <circle className="map-pin-core" cx="180" cy="115" r="3" />
     </svg>
   )
 }
@@ -149,13 +179,24 @@ function DetailValue({ label, value }: { label: string; value: string | null }) 
 }
 
 function JobContent({ job }: { job: JobDetails }) {
+  const [copyStatus, setCopyStatus] = useState<'idle' | 'copied' | 'error'>('idle')
   const location = [job.address, job.city, job.region].filter(Boolean).join(', ')
-  const point = mapPoint(job)
+  const map = mapTiles(job)
   const sourceUrl = safeLink(job.url)
   const applicationUrl = safeLink(job.url_application)
   const publicationDate = displayDate(job.publication_date)
   const deadline = displayDate(job.deadline)
   const hasCoverLetter = Boolean(job.cover_letter?.trim())
+
+  async function copyCoverLetter() {
+    if (!job.cover_letter) return
+    try {
+      await navigator.clipboard.writeText(job.cover_letter)
+      setCopyStatus('copied')
+    } catch {
+      setCopyStatus('error')
+    }
+  }
 
   return (
     <>
@@ -197,14 +238,26 @@ function JobContent({ job }: { job: JobDetails }) {
               <div className="job-detail-section-heading">
                 <span className="job-detail-section-icon"><FileText size={15} /></span>
                 <div><span className="section-kicker">APPLICATION MATERIAL</span><h2>Cover letter</h2></div>
+                <button
+                  className={`job-copy-button${copyStatus === 'copied' ? ' copied' : ''}`}
+                  type="button"
+                  onClick={() => void copyCoverLetter()}
+                  aria-label={copyStatus === 'copied' ? 'Cover letter copied' : 'Copy cover letter'}
+                >
+                  {copyStatus === 'copied' ? <Check size={13} /> : <Copy size={13} />}
+                  <span>{copyStatus === 'copied' ? 'Copied' : 'Copy'}</span>
+                </button>
               </div>
+              {copyStatus === 'error' && (
+                <p className="job-copy-error" role="alert">Couldn’t copy automatically. Select the letter text and copy it manually.</p>
+              )}
               <div className="job-cover-letter">{job.cover_letter}</div>
             </section>
           )}
         </div>
 
         <aside className="job-detail-side-column">
-          {(location || job.country || point) && (
+          {(location || job.country || map) && (
             <section className="job-detail-card job-location-card">
               <div className="job-detail-section-heading">
                 <span className="job-detail-section-icon"><MapPin size={15} /></span>
@@ -214,11 +267,14 @@ function JobContent({ job }: { job: JobDetails }) {
                 <span className="job-country-flag" role="img" aria-label={job.country ?? 'Country'}>{countryFlag(job.country)}</span>
                 <span>{location || job.country}</span>
               </div>
-              {point ? (
+              {map ? (
                 <>
                   <div className="job-map-frame">
-                    <NordicMap point={point} location={location || job.country || 'job location'} />
+                    <NordicMap map={map} />
                     <span className="job-map-coordinate">LOCATION SIGNAL · {job.latitude?.toFixed(3)}, {job.longitude?.toFixed(3)}</span>
+                  </div>
+                  <div className="job-map-attribution">
+                    <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">© OpenStreetMap contributors</a>
                   </div>
                   <a
                     className="job-map-link"
