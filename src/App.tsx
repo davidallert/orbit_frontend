@@ -39,8 +39,8 @@ function App() {
   const query = useQuery({
     queryKey: ['workflow-metrics', metricsUrl],
     queryFn: fetchMetrics,
-    refetchInterval: 24 * 60 * 60 * 1_000,
-    staleTime: 30_000,
+    refetchInterval: 24 * 60 * 60 * 1000,
+    staleTime: 60000,
     retry: 1,
   })
 
