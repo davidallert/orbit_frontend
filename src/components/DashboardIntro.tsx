@@ -1,4 +1,5 @@
 import { ArrowRight, RefreshCw, Rocket, Satellite } from 'lucide-react'
+import PrimeOpportunitiesSection from './PrimeOpportunitiesSection'
 import type { Metrics } from '../types/metrics'
 
 type DashboardIntroProps = {
@@ -54,6 +55,8 @@ export default function DashboardIntro({
           </div>
         </section>
       </div>
+
+      <PrimeOpportunitiesSection />
 
       {errorMessage && (
         <div className="error-banner" role="alert">
