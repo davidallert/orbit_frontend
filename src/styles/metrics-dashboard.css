@@ -36,7 +36,7 @@
 .opportunity-header h2 {
   margin: 4px 0 0;
   color: #edf3ff;
-  font-size: clamp(20px, 2vw, 26px);
+  font-size: clamp(22px, 2.16vw, 28px);
   line-height: 1.1;
 }
 
@@ -47,7 +47,7 @@
   border: 1px solid rgba(255, 255, 255, 0.06);
   background: rgba(255, 255, 255, 0.02);
   color: #b9bfd6;
-  font-size: 12px;
+  font-size: 13px;
 }
 
 .opportunity-list {
@@ -100,7 +100,7 @@
   border-radius: 10px;
   background: rgba(255, 255, 255, 0.02);
   color: #d8c8b0;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.08em;
 }
@@ -127,7 +127,7 @@
   transform: translateY(-50%);
   z-index: 0;
   color: rgba(242, 212, 156, 0.1);
-  font-size: clamp(72px, 8.8vw, 144px);
+  font-size: clamp(75px, 9.5vw, 147px);
   font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', monospace;
   font-weight: 500;
   letter-spacing: -0.04em;
@@ -139,7 +139,7 @@
 
 .opportunity-score-tag {
   color: #a9b6d0;
-  font-size: 8px;
+  font-size: 9px;
   letter-spacing: 0.7px;
   text-transform: uppercase;
 }
@@ -147,14 +147,14 @@
 .opportunity-card h3 {
   margin: 0 0 6px;
   color: #f0f4ff;
-  font-size: 15px;
+  font-size: 16px;
   line-height: 1.25;
 }
 
 .opportunity-card p {
   margin: 0;
   color: #bac6dd;
-  font-size: 11px;
+  font-size: 12px;
   line-height: 1.5;
 }
 
@@ -211,7 +211,7 @@
 
 .score-band {
   color: #b1adcc;
-  font-size: 9px;
+  font-size: 10px;
 }
 
 .score-critical,
@@ -223,7 +223,7 @@
 .score-range {
   flex: 0 0 auto;
   color: #9daabe;
-  font-size: 9px;
+  font-size: 10px;
   font-variant-numeric: tabular-nums;
 }
 
@@ -237,12 +237,12 @@
   border: 1px solid #ffffff14;
   background: #ffffff06;
   color: #aaa6c5;
-  font-size: 9px;
+  font-size: 10px;
 }
 
 .score-guide-title {
   color: #9aa9be;
-  font-size: 8px;
+  font-size: 9px;
   letter-spacing: .7px;
 }
 
@@ -278,7 +278,7 @@
 
 .occupation-copy > span {
   color: #9daabe;
-  font-size: 8px;
+  font-size: 9px;
   text-transform: uppercase;
   letter-spacing: .45px;
 }
@@ -286,7 +286,7 @@
 .occupation-copy > strong {
   overflow: hidden;
   color: #e2deef;
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 500;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -294,7 +294,7 @@
 
 .occupation-count {
   color: #d6c58f;
-  font-size: 10px;
+  font-size: 11px;
   font-variant-numeric: tabular-nums;
 }
 
@@ -314,7 +314,7 @@
 
 .occupation-loading {
   color: #aaa6c5;
-  font-size: 9px;
+  font-size: 10px;
 }
 
 .occupation-card .metric-foot {
