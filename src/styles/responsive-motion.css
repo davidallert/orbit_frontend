@@ -68,6 +68,10 @@
   -webkit-backdrop-filter: none !important;
 }
 
+.app-shell.performance-mode .opportunity-rating {
+  text-shadow: none;
+}
+
 .app-shell.performance-mode::before,
 .app-shell.performance-mode::after,
 .app-shell.performance-mode .space-effects,
